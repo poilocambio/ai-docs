@@ -1,65 +1,52 @@
-import Image from "next/image";
+import React from "react";
+import DefaultPage from "@/components/DefaultPage";
+import Hero from "@/components/Hero";
+import type { Metadata } from "next";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "Large Language Models (LLM)",
+  description:
+    "Struttura, funzionamento e limiti dei Large Language Models.",
+};
+
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <DefaultPage
+      title="Artificial Intelligence Documentation"
+      content={
+        <div className="space-y-16">
+          {/* Hero */}
+          <Hero />
+
+          {/* Introduzione */}
+          <section className="mx-auto max-w-4xl px-6">
+            <h2 className="text-2xl font-semibold text-black mb-4">
+              Benvenuto in AI Docs
+            </h2>
+            <p className="text-neutral-600 leading-relaxed">
+              Questo sito esplora l'intelligenza artificiale a 360°, dai concetti tecnici 
+              come Machine Learning e Reti Neurali, fino ai dilemmi etici e futuri. 
+              Qui puoi scoprire sia come funziona la tecnologia sia come impatta sulla società.
+            </p>
+          </section>
+
+          {/* Sezioni principali */}
+          <section className="grid md:grid-cols-3 gap-8 mx-auto max-w-6xl px-6">
+            <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-lg transition-shadow">
+              <h3 className="font-semibold text-lg mb-2">Tecnico</h3>
+              <p className="text-neutral-600">Scopri machine learning, reti neurali e progetti reali come MNIST.</p>
+            </div>
+            <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-lg transition-shadow">
+              <h3 className="font-semibold text-lg mb-2">Etico</h3>
+              <p className="text-neutral-600">Approfondisci dilemmi etici, impatto sociale e futuro dell’IA.</p>
+            </div>
+            <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-lg transition-shadow">
+              <h3 className="font-semibold text-lg mb-2">Risorse</h3>
+              <p className="text-neutral-600">Tutorial, guide, esempi di codice e articoli scientifici aggiornati.</p>
+            </div>
+          </section>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      }
+    />
   );
 }
