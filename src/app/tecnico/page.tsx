@@ -1,5 +1,13 @@
 import React from "react";
 import DefaultPage from "@/components/DefaultPage";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "AI Docs - Tecnico",
+  description:
+    "Tecnico Page AI Docs",
+};
+
 
 export default function TecnicoPage() {
   return (
@@ -35,14 +43,6 @@ export default function TecnicoPage() {
             </p>
           </section>
         </div>
-      }
-      localSidebar={
-        <ul className="space-y-2 text-sm">
-          <li className="hover:text-black cursor-pointer">Machine Learning</li>
-          <li className="hover:text-black cursor-pointer">Reti Neurali</li>
-          <li className="hover:text-black cursor-pointer">Progetto MNIST</li>
-          <li className="hover:text-black cursor-pointer">Tipi di IA</li>
-        </ul>
       }
     />
   );

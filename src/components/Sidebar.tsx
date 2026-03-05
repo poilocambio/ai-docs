@@ -29,7 +29,7 @@ export default function Sidebar() {
     >
       {/* Spazio logo + pulsante hamburger */}
       <div
-        className="relative flex items-center border-b border-neutral-200"
+        className="relative flex items-center border-b border-neutral-200 text-black"
         style={{ height: "var(--header-height)" }}
       >
         {/* Logo (sparisce quando sidebar chiusa) */}

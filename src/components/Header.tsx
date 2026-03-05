@@ -10,7 +10,7 @@ export default function Header() {
     <header className="border-b border-neutral-200 bg-white sticky top-0 z-50" style={{ height: "var(--header-height)" }}>
       <div className="mx-auto max-w-7xl flex items-center justify-between px-6 py-4">
         {/* Logo */}
-        <div className="text-lg font-semibold tracking-tight">AI Docs</div>
+        <div className="text-lg font-semibold tracking-tight text-black">AI Docs</div>
 
         {/* Menu desktop */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-neutral-600">
