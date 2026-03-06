@@ -7,7 +7,7 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="border-b border-neutral-200 bg-white sticky top-0 z-50" style={{ height: "var(--header-height)" }}>
+    <header className="border-b border-neutral-200 bg-transparent sticky top-0 z-50" style={{ height: "var(--header-height)" }}>
       <div className="mx-auto max-w-7xl flex items-center justify-between px-6 py-4">
         {/* Logo */}
         <div className="text-lg font-semibold tracking-tight text-black">AI Docs</div>
@@ -32,7 +32,7 @@ export default function Header() {
 
       {/* Drawer mobile */}
       {mobileOpen && (
-        <nav className="md:hidden bg-white border-t border-neutral-200">
+        <nav className="md:hidden bg-transparent border-t border-neutral-200">
           <ul className="flex flex-col p-4 gap-2">
             {docs.map((page) => (
               <li key={page.href}>

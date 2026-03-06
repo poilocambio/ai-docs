@@ -10,50 +10,55 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col
-    
-    
-    
-    
-    text-center">
-      {/* Hero come prima sezione */}
+    <div className="flex flex-col text-center">
+
       <Hero />
 
-      {/* Sezione contenuti principali */}
       <DefaultPage
         title="Di cosa parlerà questo sito"
         content={
           <>
-            {/* Introduzione */}
             <section className="mx-auto max-w-4xl px-6">
               <h2 className="text-2xl font-semibold text-black mb-4">
                 Dai tecnicismi ai dilemmi etici
               </h2>
               <p className="text-neutral-600 leading-relaxed">
-                Questo sito esplora l'intelligenza artificiale a 360°, dai concetti tecnici 
-                come Machine Learning e Reti Neurali, fino ai dilemmi etici e futuri. 
-                Qui puoi scoprire sia come funziona la tecnologia sia come impatta sulla società.
+                Questo sito esplora l'intelligenza artificiale a 360°,
+                dai concetti tecnici come Machine Learning e Reti Neurali
+                fino ai dilemmi etici e alle implicazioni sociali future.
               </p>
             </section>
 
-            {/* Sezioni principali */}
             <section className="grid md:grid-cols-3 gap-8 mx-auto max-w-6xl px-6">
-              <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-lg transition-shadow">
+
+              <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-xl hover:-translate-y-1 transition-all bg-transparent">
                 <h3 className="font-semibold text-lg mb-2">Tecnico</h3>
-                <p className="text-neutral-600">Scopri machine learning, reti neurali e progetti reali come MNIST.</p>
+                <p className="text-neutral-600">
+                  Machine learning, deep learning, neuroni artificiali
+                  e progetti pratici.
+                </p>
               </div>
-              <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-lg transition-shadow">
+
+              <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-xl hover:-translate-y-1 transition-all bg-transparent">
                 <h3 className="font-semibold text-lg mb-2">Etico</h3>
-                <p className="text-neutral-600">Approfondisci dilemmi etici, impatto sociale e futuro dell’IA.</p>
+                <p className="text-neutral-600">
+                  Bias algoritmico, impatto sociale e questioni morali
+                  legate all’AI.
+                </p>
               </div>
-              <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-lg transition-shadow">
+
+              <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-xl hover:-translate-y-1 transition-all bg-transparent">
                 <h3 className="font-semibold text-lg mb-2">Risorse</h3>
-                <p className="text-neutral-600">Tutorial, guide, esempi di codice e articoli scientifici aggiornati.</p>
+                <p className="text-neutral-600">
+                  Guide, articoli scientifici e tutorial aggiornati.
+                </p>
               </div>
+
             </section>
           </>
         }
       />
+
     </div>
   );
 }

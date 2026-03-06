@@ -23,7 +23,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`sticky top-0 h-screen border-r border-neutral-200 bg-white transition-all duration-300 ${
+      className={`sticky top-0 h-screen border-r border-neutral-200 bg-transparent transition-all duration-300 ${
         sidebarOpen ? "w-64" : "w-16"
       }`}
     >
