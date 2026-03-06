@@ -22,7 +22,6 @@ export default function RootLayout({
   return (
     <html lang="it">
       <body className="flex min-h-screen overflow-x-hidden relative bg-white">
-        
         {/* Canvas globale: Neural Network + particelle */}
         <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
           <NeuralBackground />
@@ -37,7 +36,6 @@ export default function RootLayout({
           <Header />
           <main className="flex-1 p-6">{children}</main>
         </div>
-
       </body>
     </html>
   );

@@ -23,7 +23,7 @@ export default function Header() {
 
         {/* Menu mobile toggle */}
         <button
-          className="md:hidden p-2 border rounded"
+          className="md:hidden p-2 rounded"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           ☰
