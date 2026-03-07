@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import NeuralBackgroundWrapper from "@/components/NeuralBackgroundWrapper";
+
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
-import NeuralBackground from "@/components/NeuralBackground";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tuodominio.it"),
@@ -22,18 +23,16 @@ export default function RootLayout({
   return (
     <html lang="it">
       <body className="flex min-h-screen overflow-x-hidden relative bg-white">
-        {/* Canvas globale: Neural Network + particelle */}
+        {/* -da chatGPT- Canvas globale: neutrale, pointer-events-none, z-index -10 */}
         <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
-          <NeuralBackground />
+          <NeuralBackgroundWrapper />
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-transparent to-purple-50 opacity-40" />
         </div>
-        
-        
 
-        {/* Sidebar */}
+        {/* -da chatGPT- Sidebar sticky */}
         <Sidebar />
 
-        {/* Area principale: Header + contenuto */}
+        {/* -da chatGPT- Area principale: Header + contenuto */}
         <div className="flex-1 flex flex-col">
           <Header />
           <main className="flex-1 p-6">{children}</main>
