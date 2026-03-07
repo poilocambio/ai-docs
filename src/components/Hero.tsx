@@ -4,11 +4,9 @@ import Link from "next/link";
 export default function Hero() {
   return (
     <section className="relative bg-transparent min-h-screen flex flex-col justify-between overflow-hidden">
-      {/* Grid matematica */}
-      <div className="absolute inset-0 opacity-45 pointer-events-none">
-        <div
-          className="w-full h-full bg-[linear-gradient(to right,#e5e5e5 1px,transparent 1px),linear-gradient(to bottom,#e5e5e5 1px,transparent 1px)] bg-[size:40px_40px]"
-        />
+      {/*Grid decorativa*/}
+      <div className="absolute inset-0 opacity-30 pointer-events-none">
+        <div className="w-full h-full bg-[linear-gradient(to_right,#e5e5e5_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e5_1px,transparent_1px)] bg-[size:40px_40px]" />
       </div>
 
       {/* Contenuto */}
@@ -49,7 +47,11 @@ export default function Hero() {
           strokeWidth="2"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
         <svg
           className="w-5 h-5 -mt-2"
@@ -58,7 +60,11 @@ export default function Hero() {
           strokeWidth="2"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
       </div>
     </section>

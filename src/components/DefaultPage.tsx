@@ -9,13 +9,10 @@ type DefaultPageProps = {
 export default function DefaultPage({ title, content }: DefaultPageProps) {
   return (
     <div className="relative flex flex-col md:flex-row bg-transparent overflow-hidden">
-      {/* Grid decorativa */}
+      {/*Grid decorativa*/}
       <div className="absolute inset-0 opacity-30 pointer-events-none">
-        <div
-          className="w-full h-full bg-[linear-gradient(to_right,#e5e5e5_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e5_1px,transparent_1px)] bg-[size:40px_40px]"
-        />
+        <div className="w-full h-full bg-[linear-gradient(to_right,#e5e5e5_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e5_1px,transparent_1px)] bg-[size:40px_40px]" />
       </div>
-
       {/* 
         -da chatGPT-
         Abbiamo aggiunto la classe "avoid-canvas" sul main content.
