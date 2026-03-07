@@ -6,13 +6,19 @@ import { docs } from "@/data/docs";
 import { FiMenu, FiX } from "react-icons/fi";
 
 // Lazy load icone per ridurre bundle iniziale
-const MenuIcon = dynamic(() => import("react-icons/fi").then(mod => mod.FiMenu), { ssr: false });
-const CloseIcon = dynamic(() => import("react-icons/fi").then(mod => mod.FiX), { ssr: false });
+const MenuIcon = dynamic(
+  () => import("react-icons/fi").then((mod) => mod.FiMenu),
+  { ssr: false },
+);
+const CloseIcon = dynamic(
+  () => import("react-icons/fi").then((mod) => mod.FiX),
+  { ssr: false },
+);
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const toggleMobile = useCallback(() => setMobileOpen(prev => !prev), []);
+  const toggleMobile = useCallback(() => setMobileOpen((prev) => !prev), []);
 
   return (
     <header
@@ -21,11 +27,13 @@ const Header = () => {
     >
       <div className="mx-auto max-w-7xl flex items-center justify-between px-6 py-4">
         {/* Logo */}
-        <h1 className="text-lg font-semibold tracking-tight text-black">AI Docs</h1>
+        <h1 className="text-lg font-semibold tracking-tight text-black">
+          AI Docs
+        </h1>
 
         {/* Menu desktop */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-neutral-600">
-          {docs.map(page => (
+          {docs.map((page) => (
             <Link
               key={page.href}
               href={page.href}
@@ -50,26 +58,26 @@ const Header = () => {
       {/* Drawer mobile */}
       {mobileOpen && (
         <nav
-          className="md:hidden fixed inset-x-0 top-[var(--header-height)] bg-white/30 glass-section backdrop-blur-md border-t border-neutral-200 shadow-lg z-40 animate-slideDown"
+          className="md:hidden fixed inset-x-0 top-[var(--header-height)] bg-white/80 border-t border-neutral-200 shadow-md z-40 animate-slideDown"
           aria-label="Menu mobile"
         >
           <ul className="flex flex-col p-4 gap-2">
-            {docs.map(page => (
+            {docs.map((page) => (
               <li key={page.href}>
                 <Link
                   href={page.href}
-                  className="block text-black font-medium py-2 px-4 rounded hover:bg-white/50 transition-colors duration-200"
+                  className="block text-black font-medium py-2 px-4 rounded-lg hover:bg-white/50 transition-colors duration-200"
                   onClick={() => setMobileOpen(false)}
                 >
                   {page.title}
                 </Link>
                 {page.children && (
                   <ul className="ml-4 mt-1 space-y-1">
-                    {page.children.map(child => (
+                    {page.children.map((child) => (
                       <li key={child.href}>
                         <Link
                           href={child.href}
-                          className="block text-sm text-black hover:bg-white/50 rounded px-3 py-1 transition-colors duration-200"
+                          className="block text-sm text-black px-3 py-1 rounded-lg hover:bg-white/50 transition-colors duration-200"
                           onClick={() => setMobileOpen(false)}
                         >
                           {child.title}
