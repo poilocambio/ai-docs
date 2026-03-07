@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import NeuralBackgroundWrapper from "@/components/NeuralBackgroundWrapper";
-
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tuodominio.it"),
@@ -37,6 +37,7 @@ export default function RootLayout({
           <Header />
           <main className="flex-1 p-6">{children}</main>
         </div>
+        <Analytics />
       </body>
     </html>
   );

@@ -10,9 +10,14 @@ export default function Header() {
   const toggleMobile = useCallback(() => setMobileOpen((prev) => !prev), []);
 
   return (
-    <header className="border-b border-neutral-200 bg-transparent sticky top-0 z-50" style={{ height: "var(--header-height)" }}>
+    <header
+      className="border-b border-neutral-200 bg-transparent sticky top-0 z-50"
+      style={{ height: "var(--header-height)" }}
+    >
       <div className="mx-auto max-w-7xl flex items-center justify-between px-6 py-4">
-        <div className="text-lg font-semibold tracking-tight text-black">AI Docs</div>
+        <div className="text-lg font-semibold tracking-tight text-black">
+          AI Docs
+        </div>
 
         {/* Menu desktop */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-neutral-600">
@@ -42,7 +47,10 @@ export default function Header() {
                   <ul className="ml-4 mt-1 space-y-1">
                     {page.children.map((child) => (
                       <li key={child.href}>
-                        <Link href={child.href} className="text-sm hover:text-black">
+                        <Link
+                          href={child.href}
+                          className="text-sm hover:text-black"
+                        >
                           {child.title}
                         </Link>
                       </li>
