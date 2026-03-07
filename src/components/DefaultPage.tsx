@@ -12,11 +12,19 @@ export default function DefaultPage({ title, content }: DefaultPageProps) {
       {/* Grid decorativa */}
       <div className="absolute inset-0 opacity-30 pointer-events-none">
         <div
-          className="w-full h-full bg-[linear-gradient(to right,#e5e5e5 1px,transparent 1px),linear-gradient(to bottom,#e5e5e5 1px,transparent 1px)] bg-[size:40px_40px]"
+          className="w-full h-full bg-[linear-gradient(to_right,#e5e5e5_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e5_1px,transparent_1px)] bg-[size:40px_40px]"
         />
       </div>
 
-      <main className="relative flex-1">
+      {/* 
+        -da chatGPT-
+        Abbiamo aggiunto la classe "avoid-canvas" sul main content.
+        Il canvas neurale leggerà questa area tramite querySelector
+        e impedirà ai nodi di entrare in questa zona.
+        In questo modo tutto il contenuto delle pagine resta leggibile
+        senza dover aggiungere la classe manualmente in ogni pagina.
+      */}
+      <main className="relative flex-1 avoid-canvas">
         <div className="mx-auto max-w-4xl px-6 py-24">
           <h1 className="text-4xl font-semibold tracking-tight text-black sm:text-5xl text-center mb-12">
             {title ?? "Pagina"}
