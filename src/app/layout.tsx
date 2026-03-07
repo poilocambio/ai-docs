@@ -27,6 +27,7 @@ export default function RootLayout({
           <NeuralBackground />
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-transparent to-purple-50 opacity-40" />
         </div>
+        
 
         {/* Sidebar */}
         <Sidebar />

@@ -1,121 +1,263 @@
-// "use client" indica a Next.js che questo componente deve essere eseguito nel browser (lato client), non sul server
 "use client";
 
-// Importiamo due hook di React:
-// useEffect → serve per eseguire codice dopo che il componente è stato renderizzato
-// useRef → serve per creare un riferimento a un elemento HTML (qui un canvas)
 import { useEffect, useRef } from "react";
 
-// Definiamo il componente React chiamato NeuralBackground
 export default function NeuralBackground() {
 
-  // Creiamo un riferimento al canvas HTML
-  // In pratica "canvasRef" punterà al nostro <canvas> nella pagina
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // useEffect con array vuoto [] significa che il codice dentro verrà eseguito **una sola volta**, quando il componente viene montato
-  useEffect(() => {
+useEffect(() => {
 
-    // "canvas" è il nostro elemento canvas reale, preso dal riferimento
-    const canvas = canvasRef.current!;
 
-    // "ctx" è il contesto 2D del canvas, cioè dove possiamo disegnare
-    const ctx = canvas.getContext("2d")!;
+const canvas = canvasRef.current!;
+const ctx = canvas.getContext("2d")!;
 
-    // Otteniamo larghezza e altezza della finestra del browser
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+// ============================================================
+// -da chatGPT-
+// Detect mobile device to reduce visual noise and CPU usage
+// ============================================================
 
-    // Impostiamo il canvas alla stessa dimensione della finestra
-    canvas.width = width;
-    canvas.height = height;
+const isMobile = window.innerWidth < 768;
 
-    // Creiamo un array di "nodi" (puntini) con posizione casuale e velocità casuale
-    // Array.from({ length: 40 }) → crea un array di 40 elementi
-    const nodes = Array.from({ length: 40 }).map(() => ({
-      x: Math.random() * width,  // posizione x casuale
-      y: Math.random() * height, // posizione y casuale
-      vx: (Math.random() - 0.5) * 0.4, // velocità x casuale tra -0.2 e 0.2
-      vy: (Math.random() - 0.5) * 0.4, // velocità y casuale tra -0.2 e 0.2
-    }));
+// ============================================================
+// -da chatGPT-
+// Adaptive configuration depending on device
+// Fewer nodes + smaller distances on mobile for readability
+// ============================================================
 
-    // Inizializziamo la posizione del mouse al centro della finestra
-    let mouse = { x: width / 2, y: height / 2 };
+const NODE_COUNT = isMobile ? 18 : 40;
+const CONNECT_DISTANCE = isMobile ? 80 : 120;
+const NODE_SIZE = isMobile ? 1.5 : 2;
+const LINE_OPACITY_MULTIPLIER = isMobile ? 0.25 : 1;
+const MOUSE_DISTANCE = isMobile ? 0 : 150; // disable mouse interaction on mobile
 
-    // Aggiorniamo la posizione del mouse ogni volta che si muove
-    window.addEventListener("mousemove", (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    });
+let width = window.innerWidth;
+let height = window.innerHeight;
 
-    // Funzione principale per disegnare tutto sul canvas
-    function draw() {
+// ============================================================
+// -da chatGPT-
+// Retina / HiDPI support
+// Prevents blurry canvas on mobile and modern displays
+// ============================================================
 
-      // Puliamo il canvas ad ogni frame
-      ctx.clearRect(0, 0, width, height);
+const dpr = window.devicePixelRatio || 1;
 
-      // Aggiorniamo la posizione dei nodi e li disegniamo
-      nodes.forEach((n) => {
-        n.x += n.vx; // muoviamo il nodo in x
-        n.y += n.vy; // muoviamo il nodo in y
+function setupCanvas() {
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
 
-        // Se il nodo tocca il bordo, invertiamo la direzione
-        if (n.x < 0 || n.x > width) n.vx *= -1;
-        if (n.y < 0 || n.y > height) n.vy *= -1;
+  canvas.style.width = width + "px";
+  canvas.style.height = height + "px";
 
-        // Disegniamo il nodo come un piccolo cerchio
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, 2, 0, Math.PI * 2); // cerchio di raggio 2
-        ctx.fillStyle = "#999"; // colore grigio
-        ctx.fill();
-      });
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(dpr, dpr);
+}
 
-      // Colleghiamo i nodi vicini con linee
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x; // differenza x
-          const dy = nodes[i].y - nodes[j].y; // differenza y
-          const dist = Math.sqrt(dx * dx + dy * dy); // distanza tra nodi
+setupCanvas();
 
-          // Se i nodi sono abbastanza vicini (<120px), disegniamo una linea
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(nodes[i].x, nodes[i].y);
-            ctx.lineTo(nodes[j].x, nodes[j].y);
+// ============================================================
+// Create nodes
+// ============================================================
 
-            // L'opacità della linea diminuisce con la distanza
-            ctx.strokeStyle = `rgba(150,150,150,${1 - dist / 120})`;
-            ctx.stroke();
-          }
-        }
-      }
+const nodes = Array.from({ length: NODE_COUNT }).map(() => ({
+  x: Math.random() * width,
+  y: Math.random() * height,
+  vx: (Math.random() - 0.5) * 0.4,
+  vy: (Math.random() - 0.5) * 0.4,
+}));
 
-      // Colleghiamo i nodi vicini al mouse con linee leggere
-      nodes.forEach((n) => {
-        const dx = n.x - mouse.x;
-        const dy = n.y - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+// ============================================================
+// Mouse interaction
+// ============================================================
 
-        // Se il nodo è abbastanza vicino al mouse (<150px)
-        if (dist < 150) {
-          ctx.beginPath();
-          ctx.moveTo(n.x, n.y);
-          ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = "rgba(120,120,120,0.2)"; // linea molto trasparente
-          ctx.stroke();
-        }
-      });
+let mouse = { x: width / 2, y: height / 2 };
 
-      // Chiediamo al browser di chiamare draw di nuovo al prossimo frame (animazione continua)
-      requestAnimationFrame(draw);
+const mouseMoveHandler = (e: MouseEvent) => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+};
+
+// -da chatGPT-
+// Only enable mouse interaction on non-mobile devices
+if (!isMobile) {
+  window.addEventListener("mousemove", mouseMoveHandler);
+}
+
+// ============================================================
+// -da chatGPT-
+// Detect areas that should NOT contain nodes (text areas)
+// Developers can add class "avoid-canvas" to any element
+// ============================================================
+
+function getAvoidAreas() {
+  const elements = document.querySelectorAll(".avoid-canvas");
+
+  return Array.from(elements).map((el) => {
+    const rect = el.getBoundingClientRect();
+
+    return {
+      left: rect.left,
+      right: rect.right,
+      top: rect.top,
+      bottom: rect.bottom,
+    };
+  });
+}
+
+let avoidAreas = getAvoidAreas();
+
+function isInsideAvoidArea(x: number, y: number) {
+  return avoidAreas.some(
+    (rect) =>
+      x > rect.left &&
+      x < rect.right &&
+      y > rect.top &&
+      y < rect.bottom
+  );
+}
+
+// ============================================================
+// Resize handling
+// ============================================================
+
+const resizeHandler = () => {
+
+  width = window.innerWidth;
+  height = window.innerHeight;
+
+  setupCanvas();
+
+  // -da chatGPT-
+  // recalculate avoid areas because layout changed
+  avoidAreas = getAvoidAreas();
+};
+
+window.addEventListener("resize", resizeHandler);
+
+// ============================================================
+// Animation loop
+// ============================================================
+
+// -da chatGPT-
+// Save animation frame id to properly cancel on unmount
+let animationId: number;
+
+function draw() {
+
+  ctx.clearRect(0, 0, width, height);
+
+  // ============================================================
+  // Update and draw nodes
+  // ============================================================
+
+  nodes.forEach((n) => {
+
+    n.x += n.vx;
+    n.y += n.vy;
+
+    if (n.x < 0 || n.x > width) n.vx *= -1;
+    if (n.y < 0 || n.y > height) n.vy *= -1;
+
+    // -da chatGPT-
+    // Prevent nodes from entering text areas
+    if (isInsideAvoidArea(n.x, n.y)) {
+      n.vx *= -1;
+      n.vy *= -1;
+      n.x += n.vx * 2;
+      n.y += n.vy * 2;
     }
 
-    // Avviamo il ciclo di disegno
-    draw();
-  }, []); // array vuoto significa "esegui solo una volta all'inizio"
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, NODE_SIZE, 0, Math.PI * 2);
+    ctx.fillStyle = "#999";
+    ctx.fill();
+  });
 
-  // Ritorniamo il canvas, posizionato in modo assoluto e ignorando eventi del mouse
-  return (
-    <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
-  );
+  // ============================================================
+  // Draw node connections
+  // ============================================================
+
+  for (let i = 0; i < nodes.length; i++) {
+
+    for (let j = i + 1; j < nodes.length; j++) {
+
+      const dx = nodes[i].x - nodes[j].x;
+      const dy = nodes[i].y - nodes[j].y;
+
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < CONNECT_DISTANCE) {
+
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x, nodes[i].y);
+        ctx.lineTo(nodes[j].x, nodes[j].y);
+
+        const opacity =
+          (1 - dist / CONNECT_DISTANCE) * LINE_OPACITY_MULTIPLIER;
+
+        ctx.strokeStyle = `rgba(150,150,150,${opacity})`;
+        ctx.stroke();
+      }
+    }
+  }
+
+  // ============================================================
+  // Mouse interaction lines
+  // ============================================================
+
+  if (!isMobile && MOUSE_DISTANCE > 0) {
+
+    nodes.forEach((n) => {
+
+      const dx = n.x - mouse.x;
+      const dy = n.y - mouse.y;
+
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < MOUSE_DISTANCE) {
+
+        ctx.beginPath();
+        ctx.moveTo(n.x, n.y);
+        ctx.lineTo(mouse.x, mouse.y);
+
+        ctx.strokeStyle = "rgba(120,120,120,0.2)";
+        ctx.stroke();
+      }
+    });
+  }
+
+  animationId = requestAnimationFrame(draw);
+}
+
+draw();
+
+// ============================================================
+// React cleanup
+// ============================================================
+
+// -da chatGPT-
+// Prevent memory leaks when component unmounts
+return () => {
+
+  cancelAnimationFrame(animationId);
+
+  window.removeEventListener("resize", resizeHandler);
+  window.removeEventListener("mousemove", mouseMoveHandler);
+};
+
+
+}, []);
+
+return (
+<canvas ref={canvasRef}className="absolute inset-0 pointer-events-none z-0"/>
+
+
+  // -da chatGPT-
+  // Tailwind classes:
+  // absolute inset-0 -> full screen background
+  // pointer-events-none -> canvas does not block clicks
+  // z-0 -> ensure it stays behind UI elements
+  
+
+);
 }
