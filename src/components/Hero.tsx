@@ -11,49 +11,52 @@ export default function Hero() {
 
       {/* Contenuto principale */}
       <div className="relative mx-auto max-w-4xl px-6 pt-24 text-center">
-        <h1 className="text-4xl font-bold text-black mb-4 sm:text-5xl tracking-tight">
+        <h1 className="text-4xl font-bold text-black mb-4 sm:text-5xl tracking-tight glass-section">
           Benvenuto in AI Docs
         </h1>
-        <p className="mt-6 text-lg leading-relaxed text-neutral-600">
+        <p className="mt-6 text-lg leading-relaxed text-neutral-600 glass-section">
           Scopri tutto sull'intelligenza artificiale: dalle basi del machine
           learning alle reti neurali fino alle implicazioni etiche della
           tecnologia.
         </p>
 
-        <div className="mt-10 flex justify-center gap-4">
+        <div className="mt-10 flex justify-center gap-4 glass-section">
           <Link
             href="/tecnico"
-            className="rounded-md bg-black px-6 py-3 text-sm font-medium text-white hover:bg-neutral-800 transition-colors"
+            className="rounded-md bg-black/90 px-6 py-3 text-sm font-medium text-white hover:bg-neutral-800 transition-colors"
           >
             Get Started
           </Link>
           <Link
             href="/etica"
-            className="rounded-md border border-neutral-300 px-6 py-3 text-sm font-medium text-black hover:bg-neutral-100 transition-colors"
+            className="rounded-md border border-neutral-300 px-6 py-3 text-sm font-medium text-black hover:bg-white/70 transition-colors"
           >
             Explore Ethics
           </Link>
+          
+          {/* bg-white/30 rounded-lg */}
+          
         </div>
       </div>
 
       {/* Scroll indicator */}
-      <div className="relative flex flex-col items-center mb-28 text-neutral-400 animate-bounce">
-        {[0, 1].map((i) => (
-          <svg
-            key={i}
-            className={`w-5 h-5 ${i === 1 ? "-mt-2" : ""}`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        ))}
+      <div
+        className="relative flex flex-col items-center mb-28 text-neutral-400"
+        aria-hidden="true" // -da chatGPT- decorativo, non leggibile da screen reader
+      >
+        <svg
+          className="w-5 h-5 animate-bounce-scroll"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
       </div>
     </section>
   );

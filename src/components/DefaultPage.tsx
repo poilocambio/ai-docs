@@ -17,14 +17,14 @@ export default function DefaultPage({ title, content }: DefaultPageProps) {
       {/* -da chatGPT- Area content principale marcata come "avoid-canvas" per il canvas neurale */}
       <main className="relative flex-1 avoid-canvas">
         <div className="mx-auto max-w-4xl px-6 py-24">
-          <h1 className="text-4xl font-semibold tracking-tight text-black sm:text-5xl text-center mb-12">
+          <h1 className="text-4xl font-semibold tracking-tight text-black sm:text-5xl text-center mb-12 glass-section">
             {title ?? "Pagina"}
           </h1>
 
           {content ? (
-            <div className="space-y-16">{content}</div>
+            <div className="space-y-16 glass-section">{content}</div>
           ) : (
-            <p className="text-lg leading-relaxed text-neutral-600">
+            <p className="text-lg leading-relaxed text-neutral-600 glass-section">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit.
             </p>
           )}

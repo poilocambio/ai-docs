@@ -31,7 +31,7 @@ export default function HomePage() {
 
             <section className="grid md:grid-cols-3 gap-8 mx-auto max-w-6xl px-6">
 
-              <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-xl hover:-translate-y-1 transition-all bg-transparent">
+              <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-xl hover:-translate-y-1 hover:bg-white/50 transition-all bg-transparent">
                 <h3 className="font-semibold text-lg mb-2">Tecnico</h3>
                 <p className="text-neutral-600">
                   Machine learning, deep learning, neuroni artificiali
@@ -39,7 +39,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-xl hover:-translate-y-1 transition-all bg-transparent">
+              <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-xl hover:-translate-y-1 hover:bg-white/50 transition-all bg-transparent">
                 <h3 className="font-semibold text-lg mb-2">Etico</h3>
                 <p className="text-neutral-600">
                   Bias algoritmico, impatto sociale e questioni morali
@@ -47,7 +47,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-xl hover:-translate-y-1 transition-all bg-transparent">
+              <div className="p-6 border border-neutral-200 rounded-lg hover:shadow-xl hover:-translate-y-1 hover:bg-white/50 transition-all bg-transparent">
                 <h3 className="font-semibold text-lg mb-2">Risorse</h3>
                 <p className="text-neutral-600">
                   Guide, articoli scientifici e tutorial aggiornati.
