@@ -15,11 +15,11 @@ export default function NeuralBackground() {
     // -da chatGPT-
     // Adaptive configuration: fewer nodes + smaller distances on mobile
     // ============================================================
-    const NODE_COUNT = isMobile ? 20 : 50;
-    const CONNECT_DISTANCE = isMobile ? 80 : 120;
+    const NODE_COUNT = isMobile ? 32 : 50;
+    const CONNECT_DISTANCE = isMobile ? 110 : 120;
     const CONNECT_DISTANCE_SQ = CONNECT_DISTANCE * CONNECT_DISTANCE;
-    const NODE_SIZE = isMobile ? 1.5 : 2;
-    const LINE_OPACITY_MULTIPLIER = isMobile ? 0.25 : 1;
+    const NODE_SIZE = isMobile ? 1.7 : 2;
+    const LINE_OPACITY_MULTIPLIER = isMobile ? 0.45 : 1;
     const MOUSE_DISTANCE = isMobile ? 0 : 150;
 
     let width = window.innerWidth;
