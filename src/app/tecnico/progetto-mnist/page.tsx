@@ -1,29 +1,26 @@
-import NeuralEvolution from "@/components/NeuralEvolution";
+import React from "react";
+import DefaultPage from "@/components/DefaultPage";
 
 export default function ProgettoMNIST() {
   return (
-    <main className="relative bg-white">
-
-      <NeuralEvolution />
-
-      <section className="h-[150vh] flex items-center justify-center">
-        <h1 className="text-5xl font-light">
-          Chaos
-        </h1>
-      </section>
-
-      <section className="h-[150vh] flex items-center justify-center">
-        <h1 className="text-5xl font-light">
-          Structure
-        </h1>
-      </section>
-
-      <section className="h-[150vh] flex items-center justify-center">
-        <h1 className="text-5xl font-light">
-          Intelligence
-        </h1>
-      </section>
-
-    </main>
+    <DefaultPage
+      title="Progetto MNIST"
+      content={
+        <>
+          <section id="intro">
+            <h2 className="text-2xl font-semibold mt-4">Introduzione al ML</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+          </section>
+          <section id="algoritmi">
+            <h2 className="text-2xl font-semibold mt-4">Algoritmi principali</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          </section>
+          <section id="progetti">
+            <h2 className="text-2xl font-semibold mt-4">Progetti pratici</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+          </section>
+        </>
+      }
+    />
   );
 }
