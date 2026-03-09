@@ -4,7 +4,7 @@ import NeuralFormation from "@/components/NeuralFormation";
 
 export default function RetiNeurali() {
   return (
-    <main className="relative bg-white/70">
+    <main className="relative bg-white/30">
 
       <NeuralFormation />
 

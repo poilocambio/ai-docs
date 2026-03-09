@@ -11,25 +11,38 @@ export default function NeuralFormation() {
 
     let width = window.innerWidth;
     let height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
+
+    const dpr = window.devicePixelRatio || 1;
+
+    function setupCanvas() {
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    setupCanvas();
 
     const isMobile = width < 768;
 
     // =====================================================
-    // Margini e dimensioni utilizzabili
+    // Layout
     // =====================================================
+
     const marginX = isMobile ? width * 0.08 : width / 4;
     const marginY = isMobile ? height * 0.05 : height / 8;
+
     const usableWidth = isMobile ? width * 0.7 : width - 2 * marginX;
     const usableHeight = isMobile ? height * 0.4 : height - 4 * marginY;
 
     const networkOffsetX = 0;
     const networkOffsetY = isMobile ? 40 : 100;
 
-    // nodi
-    const NODE_BASE_SIZE = isMobile ? 1.2 : 2;
-    const NODE_SIZE_MULT = 6;
+    const NODE_BASE_SIZE = isMobile ? 0.3 : 1;
+    const NODE_SIZE_MULT = 14;
 
     const layers = [
       { name: "Input Layer", count: 8 },
@@ -38,11 +51,9 @@ export default function NeuralFormation() {
       { name: "Hidden Layer 3", count: 9 },
       { name: "Output Layer", count: 4 },
     ];
+
     const layerCount = layers.length;
 
-    // =====================================================
-    // Calcolo posizioni X dei layer
-    // =====================================================
     const layerXPositions = layers.map(
       (_, i) => marginX + (usableWidth * i) / (layerCount - 1)
     );
@@ -56,14 +67,13 @@ export default function NeuralFormation() {
     ];
 
     const layerVerticalSpacing = layers.map((layer, i) =>
-      i === 0
-        ? (usableHeight * 0.8) / layer.count
-        : usableHeight / layer.count
+      i === 0 ? (usableHeight * 0.8) / layer.count : usableHeight / layer.count
     );
 
     // =====================================================
-    // Crea nodi
+    // Nodes
     // =====================================================
+
     type Node = {
       startX: number;
       startY: number;
@@ -72,7 +82,6 @@ export default function NeuralFormation() {
       targetX: number;
       targetY: number;
       size: number;
-      layerIndex: number;
     };
 
     const nodes: Node[] = [];
@@ -85,22 +94,26 @@ export default function NeuralFormation() {
           x: 0,
           y: 0,
           targetX: layerXPositions[l] + networkOffsetX,
-          targetY: layerYOffsets[l] + layerVerticalSpacing[l] * (n + 1) + networkOffsetY,
+          targetY:
+            layerYOffsets[l] + layerVerticalSpacing[l] * (n + 1) + networkOffsetY,
           size: NODE_BASE_SIZE,
-          layerIndex: l,
         });
       }
     });
 
     // =====================================================
-    // Scroll progress
+    // Scroll
     // =====================================================
+
     let scrollProgress = 0;
-    const updateScroll = () => {
+
+    function updateScroll() {
       const scrollTop = window.scrollY;
       const maxScroll = document.body.scrollHeight - window.innerHeight;
+
       scrollProgress = Math.min(1, scrollTop / maxScroll);
-    };
+    }
+
     window.addEventListener("scroll", updateScroll);
 
     function lerp(a: number, b: number, t: number) {
@@ -110,38 +123,60 @@ export default function NeuralFormation() {
     // =====================================================
     // Draw
     // =====================================================
+
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      // aggiorna posizioni e dimensioni
+      // aggiorna nodi
       nodes.forEach((n) => {
         n.x = lerp(n.startX, n.targetX, scrollProgress);
         n.y = lerp(n.startY, n.targetY, scrollProgress);
-        n.size = lerp(NODE_BASE_SIZE, NODE_BASE_SIZE * NODE_SIZE_MULT, scrollProgress);
+        n.size = lerp(
+          NODE_BASE_SIZE,
+          NODE_BASE_SIZE * NODE_SIZE_MULT,
+          scrollProgress
+        );
       });
 
-      // connessioni tra layer adiacenti
+      // ============================================
+      // CONNECTIONS (path batching = più veloce)
+      // ============================================
+
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(200,200,200,${scrollProgress})`;
+      ctx.lineWidth = 1 / dpr;
+
       let startIdx = 0;
+
       for (let l = 0; l < layerCount - 1; l++) {
         const neuronsA = layers[l].count;
         const neuronsB = layers[l + 1].count;
 
         for (let i = 0; i < neuronsA; i++) {
           const a = nodes[startIdx + i];
+
           for (let j = 0; j < neuronsB; j++) {
             const b = nodes[startIdx + neuronsA + j];
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(200,200,200,${scrollProgress})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
+
+            const ax = Math.round(a.x) + 0.5;
+            const ay = Math.round(a.y) + 0.5;
+            const bx = Math.round(b.x) + 0.5;
+            const by = Math.round(b.y) + 0.5;
+
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(bx, by);
           }
         }
+
         startIdx += neuronsA;
       }
 
-      // nodi
+      ctx.stroke();
+
+      // ============================================
+      // NODES
+      // ============================================
+
       nodes.forEach((n) => {
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.size, 0, Math.PI * 2);
@@ -149,41 +184,24 @@ export default function NeuralFormation() {
         ctx.fill();
       });
 
-      // etichette layer
+      // ============================================
+      // LABELS
+      // ============================================
+
+      ctx.fillStyle = "#000";
+      ctx.textAlign = "center";
+      ctx.font = `${isMobile ? 10 : 12}px sans-serif`;
+
       let idx = 0;
+
       layers.forEach((layer, l) => {
         const firstNode = nodes[idx];
-        const lastNode = nodes[idx + layer.count - 1];
         const centerY = firstNode.targetY - (isMobile ? 20 : 40);
-        ctx.font = `${isMobile ? 10 : 12}px sans-serif`;
-        ctx.fillStyle = "#000";
-        ctx.textAlign = "center";
+
         ctx.fillText(layer.name, firstNode.targetX, centerY);
+
         idx += layer.count;
       });
-
-      // frecce output
-      const outputLayer = layers[layers.length - 1];
-      const outputStartIdx = nodes.length - outputLayer.count;
-      for (let i = 0; i < outputLayer.count; i++) {
-        const n = nodes[outputStartIdx + i];
-        const arrowLength = isMobile ? 20 : 30;
-        ctx.beginPath();
-        ctx.moveTo(n.x + n.size, n.y);
-        ctx.lineTo(n.x + n.size + arrowLength, n.y);
-        ctx.lineTo(
-          n.x + n.size + arrowLength - (isMobile ? 3 : 5),
-          n.y - (isMobile ? 3 : 5)
-        );
-        ctx.moveTo(n.x + n.size + arrowLength, n.y);
-        ctx.lineTo(
-          n.x + n.size + arrowLength - (isMobile ? 3 : 5),
-          n.y + (isMobile ? 3 : 5)
-        );
-        ctx.strokeStyle = "#444";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
 
       requestAnimationFrame(draw);
     }
@@ -193,12 +211,14 @@ export default function NeuralFormation() {
     // =====================================================
     // Resize
     // =====================================================
-    const resize = () => {
+
+    function resize() {
       width = window.innerWidth;
       height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    };
+
+      setupCanvas();
+    }
+
     window.addEventListener("resize", resize);
 
     return () => {
@@ -207,5 +227,10 @@ export default function NeuralFormation() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 z-0 pointer-events-none"
+    />
+  );
 }
