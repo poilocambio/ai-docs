@@ -3,7 +3,7 @@ import NeuralFormation from "@/components/NeuralFormation";
 
 export default function RetiNeurali() {
   return (
-    <main className="relative bg-white/30">
+    <main className="relative bg-transparent">
       <NeuralFormation />
 
       {/*
@@ -15,7 +15,7 @@ export default function RetiNeurali() {
 
       <div className="flex">
         {/* Colonna testo */}
-        <div className="w-full md:w-1/2 relative z-10 bg-white/30 md:bg-transparent">
+        <div className="w-full md:w-1/2 relative z-10 bg-transparent">
 
           {/* HERO */}
           <section className="min-h-[80vh] md:min-h-screen flex flex-col justify-center px-8 md:px-16 py-20 md:py-32">
