@@ -4,48 +4,66 @@ import Link from "next/link";
 export default function Hero() {
   return (
     <section className="relative bg-transparent min-h-screen flex flex-col justify-between overflow-hidden">
+
       {/* Grid decorativa */}
       <div className="absolute inset-0 opacity-30 pointer-events-none">
         <div className="w-full h-full bg-[linear-gradient(to_right,#e5e5e5_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e5_1px,transparent_1px)] bg-[size:40px_40px]" />
       </div>
 
-      {/* Contenuto principale */}
-      <div className="relative mx-auto max-w-4xl px-6 pt-24 text-center">
-        <h1 className="text-4xl font-bold text-black mb-4 sm:text-5xl tracking-tight glass-section">
-          Benvenuto in AI Docs
+      {/* Contenuto */}
+      <div className="relative mx-auto max-w-4xl px-6 pt-28 text-center">
+
+        {/* Badge */}
+        <div className="mb-6 flex justify-center">
+          <span className="text-xs tracking-widest uppercase text-neutral-500 border border-neutral-200 px-3 py-1 rounded-full">
+            Artificial Intelligence
+          </span>
+        </div>
+
+        {/* Titolo */}
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-black leading-tight">
+          Capire l'
+          <span className="text-neutral-900">Intelligenza Artificiale</span>
         </h1>
-        <p className="mt-6 text-lg leading-relaxed text-neutral-600 glass-section">
-          Scopri tutto sull'intelligenza artificiale: dalle basi del machine
-          learning alle reti neurali fino alle implicazioni etiche della
-          tecnologia.
+
+        {/* Sottotitolo */}
+        <p className="mt-6 text-lg leading-relaxed text-neutral-600 max-w-2xl mx-auto">
+          Un'esplorazione dell'AI tra tecnologia, filosofia ed etica.
+          Dai modelli di machine learning fino alle domande più profonde
+          sul rapporto tra intelligenza umana e sistemi artificiali.
         </p>
 
-        <div className="mt-10 flex justify-center gap-4 glass-section">
+        {/* Bottoni */}
+        <div className="mt-10 flex justify-center gap-4 flex-wrap">
+
           <Link
             href="/tecnico"
-            className="rounded-md bg-black/90 px-6 py-3 text-sm font-medium text-white hover:bg-neutral-800 transition-colors"
+            className="rounded-md bg-black px-6 py-3 text-sm font-medium text-white hover:bg-neutral-800 transition-all"
           >
-            Get Started
+            Esplora la Tecnica
           </Link>
+
           <Link
             href="/etica"
-            className="rounded-md border border-neutral-300 px-6 py-3 text-sm font-medium text-black hover:bg-white/70 transition-colors"
+            className="rounded-md border border-neutral-300 px-6 py-3 text-sm font-medium text-black hover:bg-neutral-100 transition-all"
           >
-            Explore Ethics
+            Scopri l'Etica
           </Link>
-          
-          {/* bg-white/30 rounded-lg */}
-          
+
         </div>
       </div>
 
       {/* Scroll indicator */}
       <div
-        className="relative flex flex-col items-center mb-28 text-neutral-400"
-        aria-hidden="true" // -da chatGPT- decorativo, non leggibile da screen reader
+        className="relative flex flex-col items-center mb-24 text-neutral-400"
+        aria-hidden="true"
       >
+        <span className="text-xs tracking-wider mb-2 uppercase">
+          Scroll
+        </span>
+
         <svg
-          className="w-5 h-5 animate-bounce-scroll"
+          className="w-5 h-5 animate-bounce"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -58,6 +76,7 @@ export default function Hero() {
           />
         </svg>
       </div>
+
     </section>
   );
 }

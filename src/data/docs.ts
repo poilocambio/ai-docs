@@ -17,7 +17,7 @@ export const docs: DocPage[] = [
       { title: "Machine Learning", href: "/tecnico/machine-learning" },
       { title: "Reti Neurali", href: "/tecnico/reti-neurali" },
       { title: "Progetto MNIST", href: "/tecnico/progetto-mnist" },
-      { title: "Tipi di IA", href: "/tecnico/tipi-ia" },
+      { title: "Tipi AI", href: "/tecnico/tipi-ai" },
     ],
   },
   {

@@ -1,93 +1,136 @@
 "use client";
+
 import React, { useState, useCallback, memo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { docs } from "@/data/docs";
-import { FiChevronRight, FiMenu } from "react-icons/fi";
 import dynamic from "next/dynamic";
 
-// Lazy load icone per ridurre bundle iniziale
-const ChevronRight = dynamic(() => import("react-icons/fi").then(mod => mod.FiChevronRight), { ssr: false });
-const MenuIcon = dynamic(() => import("react-icons/fi").then(mod => mod.FiMenu), { ssr: false });
+// lazy icons
+const ChevronRight = dynamic(
+  () => import("react-icons/fi").then((m) => m.FiChevronRight),
+  { ssr: false },
+);
+const MenuIcon = dynamic(() => import("react-icons/fi").then((m) => m.FiMenu), {
+  ssr: false,
+});
 
 const Sidebar = () => {
   const pathname = usePathname();
+
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const toggleSection = useCallback((href: string) => {
-    setOpenSections(prev => ({ ...prev, [href]: !prev[href] }));
+    setOpenSections((prev) => ({
+      ...prev,
+      [href]: !prev[href],
+    }));
   }, []);
 
-  const toggleSidebar = useCallback(() => setSidebarOpen(prev => !prev), []);
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen((prev) => !prev);
+  }, []);
 
   const isActive = useCallback(
-    (href: string) => pathname.replace(/\/+$/, "") === href.replace(/\/+$/, "") || (href === "/" && pathname === "/"),
-    [pathname]
+    (href: string) =>
+      pathname.replace(/\/+$/, "") === href.replace(/\/+$/, "") ||
+      (href === "/" && pathname === "/"),
+    [pathname],
   );
 
   return (
     <aside
-      className={`glass-section hidden md:flex flex-col sticky top-0 h-screen transition-all duration-300 overflow-y-auto shadow-lg ${
+      className={`hidden md:flex flex-col sticky top-0 h-screen border-r border-neutral-200 bg-white transition-all duration-300 ${
         sidebarOpen ? "w-64" : "w-16"
       }`}
-      aria-label="Sidebar principale"
+      aria-label="Sidebar"
     >
-      {/* Header sidebar */}
-      <div className="relative flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-black" style={{ height: "var(--header-height)" }}>
-        <div className={`font-bold text-lg transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0"}`}>AI Docs</div>
+      {/* HEADER */}
+      <div
+        className="flex items-center border-b border-neutral-200 px-4 py-3"
+        style={{ height: "var(--header-height)" }}
+      >
+        <div
+          className={`font-semibold tracking-tight transition-all duration-200 ${
+            sidebarOpen ? "opacity-100 flex-1" : "opacity-0 w-0 overflow-hidden"
+          }`}
+        >
+          AI Docs
+        </div>
+
         <button
           onClick={toggleSidebar}
           aria-label="Toggle sidebar"
-          className="p-2 rounded hover:bg-neutral-100 transition-colors duration-200 absolute right-3"
+          className="p-2 rounded-md hover:bg-neutral-100 transition"
         >
-          <MenuIcon size={20} />
+          <MenuIcon size={18} />
         </button>
       </div>
 
-      {/* Contenuto */}
-      <ul className="mt-2 flex-1 space-y-1 text-sm text-neutral-600 px-1">
+      {/* NAV */}
+      <ul className="flex-1 overflow-y-auto py-3 text-sm px-2">
         {docs.map((page, index) => (
           <React.Fragment key={page.href}>
-            {index !== 0 && sidebarOpen && <hr className="border-neutral-200 my-2 mx-2" />}
+            {index !== 0 && sidebarOpen && (
+              <div className="my-3 border-t border-neutral-200" />
+            )}
+
             <li>
               {page.children ? (
                 <>
-                  {/* Sezione con toggle */}
-                  <div
-                    className={`flex items-center justify-between cursor-pointer font-medium px-4 py-2 rounded-lg transition-colors duration-200 hover:bg-white/20 ${
+                  {/* SECTION HEADER */}
+                  <button
+                    onClick={() => toggleSection(page.href)}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-md transition hover:bg-neutral-100 ${
                       !sidebarOpen ? "justify-center" : ""
                     }`}
-                    onClick={() => toggleSection(page.href)}
                   >
-                    <span className={`${sidebarOpen ? "inline" : "hidden"}`}>{page.title}</span>
-                    {sidebarOpen && <ChevronRight className={`transition-transform duration-200 ${openSections[page.href] ? "rotate-90 text-black" : "rotate-0 text-neutral-500"}`} />}
-                  </div>
+                    {sidebarOpen && (
+                      <span className="font-medium text-neutral-700">
+                        {page.title}
+                      </span>
+                    )}
 
-                  {/* Sotto-link */}
+                    {sidebarOpen && (
+                      <ChevronRight
+                        size={16}
+                        className={`transition-transform ${
+                          openSections[page.href] ? "rotate-90" : ""
+                        }`}
+                      />
+                    )}
+                  </button>
+
+                  {/* CHILDREN */}
                   {openSections[page.href] && sidebarOpen && (
-                    <ul className="ml-4 mt-2 space-y-1 border-l border-white/20 pl-3">
-                      {page.children.map(child => (
+                    <ul className="ml-3 mt-2 space-y-1 border-l border-neutral-200 pl-3">
+                      {page.children.map((child) => (
                         <li key={child.href}>
                           <Link
                             href={child.href}
-                            className={`flex items-center gap-2 px-2 py-1 rounded-lg transition-colors duration-200 hover:bg-white/20 ${
-                              isActive(child.href) ? "font-semibold text-black bg-white/30" : "text-neutral-600"
+                            className={`flex items-center gap-2 px-2 py-1.5 rounded-md transition ${
+                              isActive(child.href)
+                                ? "bg-neutral-100 text-black font-medium"
+                                : "text-neutral-600 hover:bg-neutral-100"
                             }`}
                           >
-                            <span className="w-2 h-2 inline-block bg-neutral-400 rounded-full" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
                             {child.title}
                           </Link>
                         </li>
                       ))}
+
                       <li>
                         <Link
                           href={`${page.href}/extra`}
-                          className={`flex items-center gap-2 px-2 py-1 rounded-lg transition-colors duration-200 hover:bg-white/20 ${
-                            isActive(`${page.href}/extra`) ? "font-semibold text-black bg-white/30" : "text-neutral-600"
+                          className={`flex items-center gap-2 px-2 py-1.5 rounded-md transition ${
+                            isActive(`${page.href}/extra`)
+                              ? "bg-neutral-100 text-black font-medium"
+                              : "text-neutral-600 hover:bg-neutral-100"
                           }`}
                         >
-                          <span className="w-2 h-2 inline-block bg-neutral-400 rounded-full" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
                           Extra {page.title}
                         </Link>
                       </li>
@@ -97,8 +140,10 @@ const Sidebar = () => {
               ) : (
                 <Link
                   href={page.href}
-                  className={`block px-4 py-2 rounded-lg transition-colors duration-200 hover:bg-white/20 ${
-                    isActive(page.href) ? "font-semibold text-black bg-white/30" : "text-neutral-600"
+                  className={`block px-3 py-2 rounded-md transition ${
+                    isActive(page.href)
+                      ? "bg-neutral-100 text-black font-medium"
+                      : "text-neutral-600 hover:bg-neutral-100"
                   }`}
                 >
                   {sidebarOpen && page.title}

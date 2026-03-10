@@ -12,16 +12,9 @@ export const metadata: Metadata = {
 export default function TecnicoPage() {
   return (
     <DefaultPage
-      title="Tecnico"
+      title="Tecnico home page"
       content={
         <div className="space-y-12">
-          <section>
-            <h2 className="text-xl font-semibold mb-2">Machine Learning</h2>
-            <p className="text-neutral-600 leading-relaxed">
-              Scopri algoritmi di apprendimento automatico, dataset e applicazioni reali.
-            </p>
-          </section>
-
           <section>
             <h2 className="text-xl font-semibold mb-2">Reti Neurali</h2>
             <p className="text-neutral-600 leading-relaxed">
