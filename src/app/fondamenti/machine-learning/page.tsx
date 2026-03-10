@@ -1,5 +1,11 @@
 import React from "react";
 import DefaultPage from "@/components/DefaultPage";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Machine Learning",
+  description: "Machine Learning Page AI Docs",
+}; 
 
 export default function MachineLearning() {
   return (

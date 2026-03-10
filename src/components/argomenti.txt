@@ -1,0 +1,94 @@
+1. Home / Landing
+Introduzione emotiva e visiva all'AI. Non tecnica, ma evocativa.
+
+Cos'è l'AI (in 3 righe)
+Perché questo sito esiste
+CTA verso le sezioni principali
+
+
+2. Fondamenti (sezione tecnica introduttiva)
+Per chi parte da zero.
+
+Cos'è l'intelligenza artificiale
+Differenza tra AI, Machine Learning e Deep Learning
+Breve storia (simbolica → statistica → deep learning)
+Tipi di AI: narrow vs general vs superintelligenza
+
+
+3. Reti Neurali (il cuore tecnico)
+Questa è la sezione più densa, dividila in sotto-pagine o tab:
+3.1 — Come funziona un neurone artificiale
+
+Analogia con il neurone biologico
+Input, pesi, funzione di attivazione, output
+Bias
+
+3.2 — Tipologie di neuroni e layer
+
+Layer densi (fully connected)
+Convoluzionali (CNN)
+Ricorrenti (RNN, LSTM, GRU)
+Attention / Transformer
+
+3.3 — Architetture di reti
+
+Feedforward
+CNN (immagini)
+RNN/LSTM (sequenze)
+Transformer (testo, audio, multimodale)
+GAN, Autoencoder, Diffusion
+
+
+4. Training (come si allena un modello)
+
+Dataset: cos'è, come si prepara, labeling
+Forward pass e backward pass
+Funzione di loss
+Gradient descent e varianti (SGD, Adam...)
+Overfitting, underfitting, regularizzazione
+Iperparametri e tuning
+Fasi: pre-training → fine-tuning → RLHF
+
+
+5. Modelli moderni (applicazioni reali)
+
+LLM (GPT, Claude, Gemini...)
+Modelli visivi (DALL·E, Stable Diffusion...)
+Modelli multimodali
+Come funziona il prompting
+
+
+6. Etica (sezione separata e ben distinta visivamente)
+Qui cambia il tono: da tecnico a riflessivo/critico.
+6.1 — Bias e discriminazione
+
+Da dove viene il bias (dati, design, uso)
+Esempi reali
+
+6.2 — Trasparenza e spiegabilità (XAI)
+
+Il problema della black box
+Come si cerca di risolvere
+
+6.3 — Privacy e dati
+
+Come i dati vengono usati per il training
+Consenso, GDPR, ownership
+
+6.4 — Impatto sul lavoro
+
+Automazione, sostituzione, nuovi ruoli
+
+6.5 — Rischi esistenziali e governance
+
+Allineamento AI
+Organismi di regolamentazione (EU AI Act, ecc.)
+Chi decide come si sviluppa l'AI?
+
+6.6 — AI e creatività
+
+Copyright, arte generativa, autorialità
+
+
+7. Glossario (opzionale ma utilissimo)
+Termini tecnici spiegati in modo accessibile. Linkabili da tutto il sito.

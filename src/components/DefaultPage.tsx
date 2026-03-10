@@ -3,33 +3,36 @@ import React, { ReactNode } from "react";
 type DefaultPageProps = {
   title?: string;
   content?: ReactNode;
-  localSidebar?: ReactNode;
 };
 
+// DefaultPage è trasparente — il frosted glass è gestito
+// dai singoli componenti figli (ArticleSection, CardGrid, ecc.)
+// così il canvas neurale rimane visibile tra una sezione e l'altra.
 export default function DefaultPage({ title, content }: DefaultPageProps) {
   return (
-    <div className="relative flex flex-col md:flex-row bg-transparent overflow-hidden">
-      {/* Grid decorativa */}
-      <div className="absolute inset-0 opacity-30 pointer-events-none">
-        <div className="w-full h-full bg-[linear-gradient(to_right,#e5e5e5_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e5_1px,transparent_1px)] bg-[size:40px_40px]" />
+    <div className="relative avoid-canvas">
+      <div className="mx-auto max-w-3xl lg:max-w-4xl px-4 sm:px-6 py-12 sm:py-16 lg:py-20">
+
+        {/* Titolo — frosted glass localizzato solo qui */}
+        {title && (
+          <div className="mb-10 sm:mb-14 inline-block w-full text-center">
+            <h1 className="inline-block text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-black leading-tight px-6 py-3 rounded-2xl bg-white/70 backdrop-blur-sm">
+              {title}
+            </h1>
+          </div>
+        )}
+
+        {content ? (
+          <div className="space-y-12 sm:space-y-16">
+            {content}
+          </div>
+        ) : (
+          <p className="text-base text-neutral-500 leading-relaxed text-center">
+            Contenuto in arrivo.
+          </p>
+        )}
+
       </div>
-
-      {/* -da chatGPT- Area content principale marcata come "avoid-canvas" per il canvas neurale */}
-      <main className="relative flex-1 avoid-canvas">
-        <div className="mx-auto max-w-4xl px-6 py-24">
-          <h1 className="text-4xl font-semibold tracking-tight text-black sm:text-5xl text-center mb-12 glass-section">
-            {title ?? "Pagina"}
-          </h1>
-
-          {content ? (
-            <div className="space-y-16 glass-section">{content}</div>
-          ) : (
-            <p className="text-lg leading-relaxed text-neutral-600 glass-section">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            </p>
-          )}
-        </div>
-      </main>
     </div>
   );
 }

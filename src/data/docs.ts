@@ -11,13 +11,13 @@ export const docs: DocPage[] = [
     href: "/",
   },
   {
-    title: "Tecnico",
-    href: "/tecnico",
+    title: "Fondamenti",
+    href: "/fondamenti",
     children: [
-      { title: "Machine Learning", href: "/tecnico/machine-learning" },
-      { title: "Reti Neurali", href: "/tecnico/reti-neurali" },
-      { title: "Progetto MNIST", href: "/tecnico/progetto-mnist" },
-      { title: "Tipi AI", href: "/tecnico/tipi-ai" },
+      { title: "Machine Learning", href: "/fondamenti/machine-learning" },
+      { title: "Reti Neurali", href: "/fondamenti/reti-neurali" },
+      { title: "Progetto MNIST", href: "/fondamenti/progetto-mnist" },
+      { title: "Tipi AI", href: "/fondamenti/tipi-ai" },
     ],
   },
   {

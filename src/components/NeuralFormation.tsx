@@ -1,204 +1,224 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
-export default function NeuralFormation() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const CHAOS_DURATION  = 1800;
+const FORM_DURATION   = 1600;
+const SETTLE_DURATION =  600;
+const LABEL_DURATION  =  400;
+
+type Phase = "chaos" | "forming" | "settling" | "done";
+
+export default function NeuralFormation({ onComplete }: { onComplete: () => void }) {
+  const canvasRef  = useRef<HTMLCanvasElement>(null);
+  const phaseRef   = useRef<Phase>("chaos");
+  const phaseStart = useRef(0);
+  const rafId      = useRef(0);
+  const completed  = useRef(false);
+
+  const triggerComplete = useCallback(() => {
+    if (!completed.current) {
+      completed.current = true;
+      onComplete();
+    }
+  }, [onComplete]);
 
   useEffect(() => {
     const canvas = canvasRef.current!;
     const ctx    = canvas.getContext("2d")!;
     const dpr    = window.devicePixelRatio || 1;
 
-    // Variabili mutabili aggiornate su resize
-    let width        = window.innerWidth;
-    let height       = window.innerHeight;
-    let isMobile     = width < 768;
-    // Mobile: il canvas occupa solo il 45% superiore del viewport
-    let canvasHeight = isMobile ? Math.round(height * 0.45) : height;
+    function getSize() {
+      const rect = canvas.parentElement!.getBoundingClientRect();
+      return { W: Math.floor(rect.width), H: Math.floor(rect.height) };
+    }
 
-    function applyCanvasSize() {
-      canvas.width        = Math.round(width        * dpr);
-      canvas.height       = Math.round(canvasHeight * dpr);
-      canvas.style.width  = `${width}px`;
-      canvas.style.height = `${canvasHeight}px`;
+    let { W, H } = getSize();
+    const isMobile = W < 640;
+
+    function applySize() {
+      ({ W, H } = getSize());
+      canvas.width        = Math.round(W * dpr);
+      canvas.height       = Math.round(H * dpr);
+      canvas.style.width  = `${W}px`;
+      canvas.style.height = `${H}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
+    applySize();
 
-    applyCanvasSize();
+    // ── Layers — leggermente più piccoli ──────────────────────────────
+    const layers = isMobile
+      ? [
+          { name: "Input",    count: 4 },
+          { name: "Hidden 1", count: 5 },
+          { name: "Hidden 2", count: 5 },
+          { name: "Output",   count: 3 },
+        ]
+      : [
+          { name: "Input",    count: 6 },
+          { name: "Hidden 1", count: 7 },
+          { name: "Hidden 2", count: 7 },
+          { name: "Hidden 3", count: 7 },
+          { name: "Output",   count: 3 },
+        ];
 
-    // ─── Layout (calcolato una volta al mount) ───────────────────────
-    const networkAreaX     = isMobile ? 0      : width / 2;
-    const networkAreaWidth = isMobile ? width   : width / 2;
+    const totalNodes = layers.reduce((s, l) => s + l.count, 0);
 
-    const marginX = networkAreaX + networkAreaWidth * (isMobile ? 0.08 : 0.10);
-    const marginY = isMobile ? canvasHeight * 0.08 : height / 8;
+    // ── Layout — rete occupa il 70% centrale del canvas ───────────────
+    const LABEL_SPACE = isMobile ? 26 : 32;
+    const BOT_PAD     = isMobile ? 24 : 32;
 
-    const usableWidth  = networkAreaWidth * (isMobile ? 0.82 : 0.80);
-    const usableHeight = isMobile
-      ? canvasHeight * 0.80
-      : height - 4 * marginY;
+    // Padding orizzontale generoso per centrare bene la rete
+    const SIDE_PAD = isMobile ? W * 0.10 : W * 0.18;
 
-    const networkOffsetX = 0;
-    const networkOffsetY = isMobile ? 8 : 100;
+    const drawH   = H - LABEL_SPACE - BOT_PAD;
+    const drawTop = LABEL_SPACE;
+    const usableW = W - SIDE_PAD * 2;
 
-    const NODE_BASE = isMobile ? 1.5 : 1;
-    const NODE_MULT = isMobile ? 7   : 14; // raggio max mobile: 10.5px — non sovrappone i nodi
+    const maxCount   = Math.max(...layers.map(l => l.count));
+    const maxNodeSize = isMobile ? 4 : 6;
+    const minGap      = isMobile ? 10 : 14;
+    const autoSize    = Math.min(maxNodeSize, Math.floor((drawH / maxCount - minGap) / 2));
+    const NODE_SIZE   = Math.max(3, autoSize);
 
-    // ─── Layers ──────────────────────────────────────────────────────
-    const layers = [
-      { name: isMobile ? "Input"    : "Input Layer",    count: 8 },
-      { name: isMobile ? "Hidden 1" : "Hidden Layer 1", count: 9 },
-      { name: isMobile ? "Hidden 2" : "Hidden Layer 2", count: 9 },
-      { name: isMobile ? "Hidden 3" : "Hidden Layer 3", count: 9 },
-      { name: isMobile ? "Output"   : "Output Layer",   count: 4 },
-    ];
-    const layerCount = layers.length;
-
-    const layerXPositions = layers.map(
-      (_, i) => marginX + (usableWidth * i) / (layerCount - 1)
-    );
-
-    // Piccoli offset verticali per layer input/output (fedele all'originale)
-    const layerYOffsets = [
-      marginY + (isMobile ? 8  : 40),
-      marginY,
-      marginY,
-      marginY,
-      marginY - (isMobile ? 4  : 20),
-    ];
-
-    const layerVerticalSpacing = layers.map((layer, i) =>
-      i === 0
-        ? (usableHeight * 0.8) / layer.count
-        : usableHeight / layer.count
-    );
-
-    // ─── Nodi ────────────────────────────────────────────────────────
-    type Node = {
-      startX: number; startY: number;
-      x: number; y: number;
-      targetX: number; targetY: number;
-      size: number;
-    };
-
-    const nodes: Node[] = [];
-
-    layers.forEach((layer, l) => {
-      for (let n = 0; n < layer.count; n++) {
-        nodes.push({
-          startX:  Math.random() * width,
-          startY:  Math.random() * canvasHeight, // chaos dentro l'area canvas
-          x: 0, y: 0,
-          targetX: layerXPositions[l] + networkOffsetX,
-          targetY: layerYOffsets[l] + layerVerticalSpacing[l] * (n + 1) + networkOffsetY,
-          size:    NODE_BASE,
-        });
-      }
-    });
-
-    // ─── Scroll ──────────────────────────────────────────────────────
-    let progress = 0;
-
-    function onScroll() {
-      const max = document.body.scrollHeight - window.innerHeight;
-      progress  = max > 0 ? Math.min(1, window.scrollY / max) : 0;
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    function lerp(a: number, b: number, t: number) {
-      return a + (b - a) * t;
-    }
-
-    // ─── Draw loop ───────────────────────────────────────────────────
-    let rafId: number;
-
-    function draw() {
-      ctx.clearRect(0, 0, width, canvasHeight);
-
-      nodes.forEach((n) => {
-        n.x    = lerp(n.startX, n.targetX, progress);
-        n.y    = lerp(n.startY, n.targetY, progress);
-        n.size = lerp(NODE_BASE, NODE_BASE * NODE_MULT, progress);
+    // Ogni layer centra i nodi verticalmente in modo indipendente
+    function buildTargets() {
+      const t: { x: number; y: number }[] = [];
+      layers.forEach((layer, li) => {
+        const tx      = SIDE_PAD + (usableW * li) / (layers.length - 1);
+        const spacing = drawH / (layer.count + 1);
+        for (let ni = 0; ni < layer.count; ni++) {
+          t.push({ x: tx, y: drawTop + spacing * (ni + 1) });
+        }
       });
+      return t;
+    }
+
+    const targets = buildTargets();
+
+    const chaos = targets.map(() => ({
+      x:  Math.random() * W,
+      y:  Math.random() * H,
+      vx: (Math.random() - 0.5) * (isMobile ? 1.0 : 1.5),
+      vy: (Math.random() - 0.5) * (isMobile ? 1.0 : 1.5),
+    }));
+
+    const pos = chaos.map(c => ({ x: c.x, y: c.y }));
+
+    function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
+    function easeInOutCubic(t: number) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    phaseStart.current = performance.now();
+
+    function draw(now: number) {
+      const phase   = phaseRef.current;
+      const elapsed = now - phaseStart.current;
+
+      ctx.clearRect(0, 0, W, H);
+
+      if (phase === "chaos") {
+        chaos.forEach((c, i) => {
+          c.x += c.vx; c.y += c.vy;
+          if (c.x < 0 || c.x > W) c.vx *= -1;
+          if (c.y < 0 || c.y > H) c.vy *= -1;
+          pos[i].x = c.x; pos[i].y = c.y;
+        });
+        if (elapsed > CHAOS_DURATION) { phaseRef.current = "forming"; phaseStart.current = now; }
+      }
+
+      if (phase === "forming") {
+        const t = Math.min(1, elapsed / FORM_DURATION);
+        const e = easeInOutCubic(t);
+        for (let i = 0; i < totalNodes; i++) {
+          pos[i].x = lerp(chaos[i].x, targets[i].x, e);
+          pos[i].y = lerp(chaos[i].y, targets[i].y, e);
+        }
+        if (t >= 1) { phaseRef.current = "settling"; phaseStart.current = now; }
+      }
+
+      if (phase === "settling" || phase === "done") {
+        for (let i = 0; i < totalNodes; i++) {
+          pos[i].x = targets[i].x; pos[i].y = targets[i].y;
+        }
+        if (phase === "settling" && elapsed > SETTLE_DURATION) {
+          phaseRef.current = "done"; phaseStart.current = now;
+        }
+      }
 
       // Connessioni
-      const connAlpha = Math.max(0, (progress - 0.4) * 2);
-      if (connAlpha > 0) {
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(180,180,180,${connAlpha})`;
-        ctx.lineWidth   = 1 / dpr;
+      const connAlpha =
+        phase === "chaos" || phase === "forming" ? 0
+        : phase === "settling" ? Math.min(1, elapsed / SETTLE_DURATION) : 1;
 
-        let idx = 0;
-        for (let l = 0; l < layerCount - 1; l++) {
-          const nA = layers[l].count;
-          const nB = layers[l + 1].count;
-          for (let i = 0; i < nA; i++) {
-            const a = nodes[idx + i];
-            for (let j = 0; j < nB; j++) {
-              const b = nodes[idx + nA + j];
-              ctx.moveTo(Math.round(a.x) + 0.5, Math.round(a.y) + 0.5);
-              ctx.lineTo(Math.round(b.x) + 0.5, Math.round(b.y) + 0.5);
+      if (connAlpha > 0) {
+        ctx.lineWidth = 0.7;
+        let ni = 0;
+        layers.forEach((layer, li) => {
+          if (li === layers.length - 1) return;
+          const next = layers[li + 1];
+          for (let i = 0; i < layer.count; i++) {
+            for (let j = 0; j < next.count; j++) {
+              const a = pos[ni + i];
+              const b = pos[ni + layer.count + j];
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.strokeStyle = `rgba(160,160,160,${connAlpha * 0.28})`;
+              ctx.stroke();
             }
           }
-          idx += nA;
-        }
-        ctx.stroke();
+          ni += layer.count;
+        });
       }
 
       // Nodi
-      nodes.forEach((n) => {
+      const currentNodeSize =
+        phase === "chaos" ? 2
+        : phase === "forming"
+          ? lerp(2, NODE_SIZE, easeInOutCubic(Math.min(1, elapsed / FORM_DURATION)))
+          : NODE_SIZE;
+
+      pos.forEach(p => {
         ctx.beginPath();
-        ctx.arc(n.x, n.y, n.size, 0, Math.PI * 2);
-        ctx.fillStyle = "#222";
+        ctx.arc(p.x, p.y, currentNodeSize, 0, Math.PI * 2);
+        ctx.fillStyle = "#1a1a1a";
         ctx.fill();
       });
 
       // Etichette
-      const lblAlpha = Math.min(1, Math.max(0, (progress - 0.75) * 4));
+      const lblAlpha = phase === "done" ? Math.min(1, elapsed / LABEL_DURATION) : 0;
       if (lblAlpha > 0) {
-        ctx.fillStyle = `rgba(0,0,0,${lblAlpha})`;
+        ctx.fillStyle = `rgba(120,120,120,${lblAlpha})`;
         ctx.textAlign = "center";
-        ctx.font      = `${isMobile ? 9 : 12}px sans-serif`;
-
-        let idx = 0;
-        layers.forEach((layer) => {
-          const n = nodes[idx];
-          ctx.fillText(layer.name, n.targetX, n.targetY - (isMobile ? 10 : 40));
-          idx += layer.count;
+        ctx.font = `${isMobile ? 9 : 10}px ui-monospace, monospace`;
+        let ni = 0;
+        layers.forEach(layer => {
+          ctx.fillText(layer.name, targets[ni].x, LABEL_SPACE - 8);
+          ni += layer.count;
         });
+        if (lblAlpha >= 1) triggerComplete();
       }
 
-      rafId = requestAnimationFrame(draw);
+      rafId.current = requestAnimationFrame(draw);
     }
 
-    draw();
+    rafId.current = requestAnimationFrame(draw);
 
-    // ─── Resize ──────────────────────────────────────────────────────
-    function onResize() {
-      width        = window.innerWidth;
-      height       = window.innerHeight;
-      isMobile     = width < 768;
-      canvasHeight = isMobile ? Math.round(height * 0.45) : height;
-      applyCanvasSize();
-      // Le posizioni target dei nodi restano invariate per evitare salti visivi
-    }
-
-    window.addEventListener("resize", onResize);
+    const ro = new ResizeObserver(applySize);
+    ro.observe(canvas.parentElement!);
 
     return () => {
-      cancelAnimationFrame(rafId); // fix memory leak: originale mancava cancel
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
+      cancelAnimationFrame(rafId.current);
+      ro.disconnect();
     };
-  }, []);
+  }, [triggerComplete]);
 
   return (
-    // Rimosso inset-0: width e height sono gestiti interamente da JS
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 z-0 pointer-events-none"
+      className="absolute inset-0 w-full h-full pointer-events-none"
     />
   );
 }

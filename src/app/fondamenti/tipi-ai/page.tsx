@@ -3,8 +3,8 @@ import DefaultPage from "@/components/DefaultPage";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI Docs - Tecnico",
-  description: "Tecnico Page AI Docs",
+  title: "Tipi AI",
+  description: "Tipi AI Page AI Docs",
 };
 
 export default function TipiAI() {
