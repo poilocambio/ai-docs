@@ -20,13 +20,27 @@ const colsMap: Record<number, string> = {
   4: "sm:grid-cols-2 lg:grid-cols-4",
 };
 
+const cardStyle = {
+  background: "rgba(255, 255, 255, 0.30)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+};
+
+const cardHoverStyle = {
+  background: "rgba(255, 255, 255, 0.50)",
+};
+
 export default function CardGrid({ cards, columns = 3 }: CardGridProps) {
   return (
     <div className={`grid grid-cols-1 ${colsMap[columns]} gap-4 sm:gap-5`}>
       {cards.map((card, i) => {
         const inner = (
-          <div className="h-full flex flex-col p-4 sm:p-5 rounded-xl border border-neutral-200/50 bg-white/30 backdrop-blur-md hover:bg-white/50 hover:shadow-md hover:-translate-y-0.5 active:bg-white/60 transition-all duration-200 group">
-
+          <div
+            className="h-full flex flex-col p-4 sm:p-5 rounded-xl border border-neutral-200/50 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.99] transition-all duration-200 group"
+            style={cardStyle}
+            onMouseEnter={e => Object.assign((e.currentTarget as HTMLElement).style, cardHoverStyle)}
+            onMouseLeave={e => Object.assign((e.currentTarget as HTMLElement).style, cardStyle)}
+          >
             {(card.icon || card.tag) && (
               <div className="flex items-center justify-between mb-3 gap-2">
                 {card.icon && (
@@ -35,7 +49,7 @@ export default function CardGrid({ cards, columns = 3 }: CardGridProps) {
                   </span>
                 )}
                 {card.tag && (
-                  <span className="ml-auto text-xs tracking-widest uppercase text-neutral-400 border border-neutral-200 px-2 py-0.5 rounded-full whitespace-nowrap">
+                  <span className="ml-auto text-xs tracking-widest uppercase text-neutral-400 border border-neutral-200/60 px-2 py-0.5 rounded-full whitespace-nowrap">
                     {card.tag}
                   </span>
                 )}
@@ -70,34 +84,3 @@ export default function CardGrid({ cards, columns = 3 }: CardGridProps) {
     </div>
   );
 }
-
-// ----------------------------------------------------------------
-// ESEMPIO D'USO in una page.tsx:
-//
-// import CardGrid from "@/components/CardGrid";
-// import { FiBrain, FiLayers, FiActivity } from "react-icons/fi";
-//
-// <CardGrid
-//   columns={3}
-//   cards={[
-//     {
-//       title: "Reti Neurali",
-//       description: "Strutture ispirate al cervello umano che imparano dai dati.",
-//       icon: <FiBrain />,
-//       tag: "Deep Learning",
-//       href: "/tecnico/reti-neurali",
-//     },
-//     {
-//       title: "Machine Learning",
-//       description: "Algoritmi che migliorano automaticamente attraverso l'esperienza.",
-//       icon: <FiLayers />,
-//       href: "/tecnico/machine-learning",
-//     },
-//     {
-//       title: "Training",
-//       description: "Il processo con cui un modello apprende dai dati.",
-//       icon: <FiActivity />,
-//     },
-//   ]}
-// />
-// ----------------------------------------------------------------

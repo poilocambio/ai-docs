@@ -12,6 +12,20 @@ type CompareTableProps = {
   caption?: string;
 };
 
+const containerStyle = {
+  background: "rgba(255, 255, 255, 0.28)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+};
+
+const headerStyle = {
+  background: "rgba(255, 255, 255, 0.18)",
+};
+
+const footerStyle = {
+  background: "rgba(255, 255, 255, 0.12)",
+};
+
 export default function CompareTable({
   columns,
   rows,
@@ -19,10 +33,15 @@ export default function CompareTable({
   caption,
 }: CompareTableProps) {
   return (
-    <div className="rounded-xl border border-neutral-200/50 overflow-hidden bg-white/30 backdrop-blur-md">
-
+    <div
+      className="rounded-xl border border-neutral-200/50 overflow-hidden"
+      style={containerStyle}
+    >
       {title && (
-        <div className="px-4 sm:px-5 py-3 border-b border-neutral-200/50 bg-white/20">
+        <div
+          className="px-4 sm:px-5 py-3 border-b border-neutral-200/40"
+          style={headerStyle}
+        >
           <span className="text-xs tracking-widest uppercase text-neutral-400 font-medium">
             {title}
           </span>
@@ -30,7 +49,7 @@ export default function CompareTable({
       )}
 
       {/* Mobile: card per colonna */}
-      <div className="sm:hidden divide-y divide-neutral-100/80">
+      <div className="sm:hidden divide-y divide-neutral-100/60">
         {columns.map((col, colIdx) => (
           <div key={colIdx} className="px-4 py-4">
             <p className="text-xs font-semibold text-black tracking-tight mb-3 uppercase">
@@ -56,7 +75,10 @@ export default function CompareTable({
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-neutral-200/50 bg-white/20">
+            <tr
+              className="border-b border-neutral-200/40"
+              style={headerStyle}
+            >
               <th className="text-left px-4 sm:px-5 py-3 text-xs font-medium text-neutral-400 w-36 sm:w-44" />
               {columns.map((col, i) => (
                 <th
@@ -69,11 +91,11 @@ export default function CompareTable({
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-neutral-100/80">
+          <tbody className="divide-y divide-neutral-100/60">
             {rows.map((row, i) => (
               <tr
                 key={i}
-                className="hover:bg-white/30 transition-colors duration-150"
+                className="hover:bg-white/20 transition-colors duration-150"
               >
                 <td className="px-4 sm:px-5 py-3 sm:py-3.5 text-xs font-medium text-neutral-500 align-top whitespace-nowrap">
                   {row.aspect}
@@ -93,44 +115,13 @@ export default function CompareTable({
       </div>
 
       {caption && (
-        <div className="px-4 sm:px-5 py-3 border-t border-neutral-100/40 bg-white/15">
+        <div
+          className="px-4 sm:px-5 py-3 border-t border-neutral-100/40"
+          style={footerStyle}
+        >
           <p className="text-xs text-neutral-400">{caption}</p>
         </div>
       )}
     </div>
   );
 }
-
-// ----------------------------------------------------------------
-// ESEMPIO D'USO in una page.tsx:
-//
-// import CompareTable from "@/components/CompareTable";
-//
-// <CompareTable
-//   title="Confronto tra tipi di AI"
-//   caption="* AGI e ASI sono ancora ipotetiche — non esistono sistemi reali di questo tipo."
-//   columns={["Narrow AI", "AGI *", "ASI *"]}
-//   rows={[
-//     {
-//       aspect: "Definizione",
-//       values: [
-//         "AI specializzata in un singolo compito",
-//         "AI con capacità cognitive umane generalizzate",
-//         "AI che supera l'intelligenza umana in ogni ambito",
-//       ],
-//     },
-//     {
-//       aspect: "Esempi reali",
-//       values: ["GPT-4, AlphaGo, sistemi di raccomandazione", "Nessuno ancora", "Nessuno ancora"],
-//     },
-//     {
-//       aspect: "Stato attuale",
-//       values: ["Esistente e diffusa", "Ricerca attiva", "Teorica"],
-//     },
-//     {
-//       aspect: "Rischi principali",
-//       values: ["Bias, privacy, automazione lavoro", "Allineamento, controllo", "Esistenziali"],
-//     },
-//   ]}
-// />
-// ----------------------------------------------------------------

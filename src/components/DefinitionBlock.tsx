@@ -11,23 +11,38 @@ type DefinitionBlockProps = {
   title?: string;
 };
 
+const containerStyle = {
+  background: "rgba(255, 255, 255, 0.28)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+};
+
+const headerStyle = {
+  background: "rgba(255, 255, 255, 0.18)",
+};
+
 export default function DefinitionBlock({ definitions, title }: DefinitionBlockProps) {
   return (
-    <div className="rounded-xl border border-neutral-200/50 overflow-hidden bg-white/30 backdrop-blur-md">
-
+    <div
+      className="rounded-xl border border-neutral-200/50 overflow-hidden"
+      style={containerStyle}
+    >
       {title && (
-        <div className="px-4 sm:px-5 py-3 border-b border-neutral-200/50 bg-white/20">
+        <div
+          className="px-4 sm:px-5 py-3 border-b border-neutral-200/40"
+          style={headerStyle}
+        >
           <span className="text-xs tracking-widest uppercase text-neutral-400 font-medium">
             {title}
           </span>
         </div>
       )}
 
-      <dl className="divide-y divide-neutral-100/80">
+      <dl className="divide-y divide-neutral-100/60">
         {definitions.map((def, i) => (
           <div
             key={i}
-            className="flex flex-col sm:flex-row sm:gap-8 px-4 sm:px-5 py-4 hover:bg-white/30 transition-colors duration-150"
+            className="flex flex-col sm:flex-row sm:gap-8 px-4 sm:px-5 py-4 hover:bg-white/20 transition-colors duration-150"
           >
             <dt className="sm:w-44 shrink-0 mb-1.5 sm:mb-0">
               <span className="font-mono text-sm font-semibold text-black">
