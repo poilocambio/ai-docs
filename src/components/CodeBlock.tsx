@@ -53,10 +53,10 @@ export default function CodeBlock({
   }, [code]);
 
   return (
-    <div className="rounded-xl border border-neutral-200 overflow-hidden text-sm">
+    <div className="rounded-xl border border-neutral-200/50 overflow-hidden text-sm backdrop-blur-md">
 
       {/* Toolbar — padding aumentato su mobile per touch target */}
-      <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 bg-neutral-50 border-b border-neutral-200 gap-2">
+      <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 bg-white/20 backdrop-blur-sm border-b border-neutral-200/50 gap-2">
 
         {/* Dots + filename */}
         <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
@@ -89,7 +89,7 @@ export default function CodeBlock({
       </div>
 
       {/* Codice — scroll orizzontale su mobile, font ridotto */}
-      <pre className="overflow-x-auto p-3 sm:p-4 bg-white m-0 text-xs sm:text-sm">
+      <pre className="overflow-x-auto p-3 sm:p-4 bg-white/40 backdrop-blur-sm m-0 text-xs sm:text-sm">
         <code
           ref={codeRef}
           className={`language-${language} leading-relaxed`}
@@ -100,7 +100,7 @@ export default function CodeBlock({
 
       {/* Caption */}
       {caption && (
-        <div className="px-3 sm:px-4 py-2 border-t border-neutral-100 bg-neutral-50/50">
+        <div className="px-3 sm:px-4 py-2 border-t border-neutral-100/50 bg-white/15">
           <p className="text-xs text-neutral-400 leading-relaxed">{caption}</p>
         </div>
       )}

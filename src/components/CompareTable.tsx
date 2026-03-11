@@ -19,10 +19,10 @@ export default function CompareTable({
   caption,
 }: CompareTableProps) {
   return (
-    <div className="rounded-xl border border-neutral-200/80 overflow-hidden bg-white/75 backdrop-blur-sm">
+    <div className="rounded-xl border border-neutral-200/50 overflow-hidden bg-white/30 backdrop-blur-md">
 
       {title && (
-        <div className="px-4 sm:px-5 py-3 border-b border-neutral-200/70 bg-white/60">
+        <div className="px-4 sm:px-5 py-3 border-b border-neutral-200/50 bg-white/20">
           <span className="text-xs tracking-widest uppercase text-neutral-400 font-medium">
             {title}
           </span>
@@ -56,7 +56,7 @@ export default function CompareTable({
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-neutral-200/70 bg-white/50">
+            <tr className="border-b border-neutral-200/50 bg-white/20">
               <th className="text-left px-4 sm:px-5 py-3 text-xs font-medium text-neutral-400 w-36 sm:w-44" />
               {columns.map((col, i) => (
                 <th
@@ -73,7 +73,7 @@ export default function CompareTable({
             {rows.map((row, i) => (
               <tr
                 key={i}
-                className="hover:bg-white/60 transition-colors duration-150"
+                className="hover:bg-white/30 transition-colors duration-150"
               >
                 <td className="px-4 sm:px-5 py-3 sm:py-3.5 text-xs font-medium text-neutral-500 align-top whitespace-nowrap">
                   {row.aspect}
@@ -93,7 +93,7 @@ export default function CompareTable({
       </div>
 
       {caption && (
-        <div className="px-4 sm:px-5 py-3 border-t border-neutral-100/70 bg-white/50">
+        <div className="px-4 sm:px-5 py-3 border-t border-neutral-100/40 bg-white/15">
           <p className="text-xs text-neutral-400">{caption}</p>
         </div>
       )}

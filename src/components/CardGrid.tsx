@@ -25,7 +25,7 @@ export default function CardGrid({ cards, columns = 3 }: CardGridProps) {
     <div className={`grid grid-cols-1 ${colsMap[columns]} gap-4 sm:gap-5`}>
       {cards.map((card, i) => {
         const inner = (
-          <div className="h-full flex flex-col p-4 sm:p-5 rounded-xl border border-neutral-200/80 bg-white/75 backdrop-blur-sm hover:bg-white/90 hover:shadow-md hover:-translate-y-0.5 active:bg-white/95 transition-all duration-200 group">
+          <div className="h-full flex flex-col p-4 sm:p-5 rounded-xl border border-neutral-200/50 bg-white/30 backdrop-blur-md hover:bg-white/50 hover:shadow-md hover:-translate-y-0.5 active:bg-white/60 transition-all duration-200 group">
 
             {(card.icon || card.tag) && (
               <div className="flex items-center justify-between mb-3 gap-2">

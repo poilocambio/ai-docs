@@ -38,10 +38,10 @@ export default function Hero() {
           {/* CTA */}
           <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
             <Link
-              href="/tecnico"
+              href="/fondamenti"
               className="rounded-md bg-black px-6 py-3 text-sm font-medium text-white hover:bg-neutral-800 active:bg-neutral-900 transition-colors"
             >
-              Esplora la Tecnica
+              Esplora i Fondamenti
             </Link>
             <Link
               href="/etica"
