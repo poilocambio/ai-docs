@@ -12,36 +12,12 @@ type CompareTableProps = {
   caption?: string;
 };
 
-const containerStyle = {
-  background: "rgba(255, 255, 255, 0.28)",
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
-};
-
-const headerStyle = {
-  background: "rgba(255, 255, 255, 0.18)",
-};
-
-const footerStyle = {
-  background: "rgba(255, 255, 255, 0.12)",
-};
-
-export default function CompareTable({
-  columns,
-  rows,
-  title,
-  caption,
-}: CompareTableProps) {
+export default function CompareTable({ columns, rows, title, caption }: CompareTableProps) {
   return (
-    <div
-      className="rounded-xl border border-neutral-200/50 overflow-hidden"
-      style={containerStyle}
-    >
+    <div className="block-glass rounded-xl border border-neutral-200/50 overflow-hidden">
+
       {title && (
-        <div
-          className="px-4 sm:px-5 py-3 border-b border-neutral-200/40"
-          style={headerStyle}
-        >
+        <div className="block-glass-header px-4 sm:px-5 py-3 border-b border-neutral-200/40">
           <span className="text-xs tracking-widest uppercase text-neutral-400 font-medium">
             {title}
           </span>
@@ -75,10 +51,7 @@ export default function CompareTable({
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr
-              className="border-b border-neutral-200/40"
-              style={headerStyle}
-            >
+            <tr className="block-glass-header border-b border-neutral-200/40">
               <th className="text-left px-4 sm:px-5 py-3 text-xs font-medium text-neutral-400 w-36 sm:w-44" />
               {columns.map((col, i) => (
                 <th
@@ -93,10 +66,7 @@ export default function CompareTable({
 
           <tbody className="divide-y divide-neutral-100/60">
             {rows.map((row, i) => (
-              <tr
-                key={i}
-                className="hover:bg-white/20 transition-colors duration-150"
-              >
+              <tr key={i} className="block-glass-row transition-colors duration-150">
                 <td className="px-4 sm:px-5 py-3 sm:py-3.5 text-xs font-medium text-neutral-500 align-top whitespace-nowrap">
                   {row.aspect}
                 </td>
@@ -115,10 +85,7 @@ export default function CompareTable({
       </div>
 
       {caption && (
-        <div
-          className="px-4 sm:px-5 py-3 border-t border-neutral-100/40"
-          style={footerStyle}
-        >
+        <div className="block-glass-caption px-4 sm:px-5 py-3 border-t border-neutral-100/40">
           <p className="text-xs text-neutral-400">{caption}</p>
         </div>
       )}

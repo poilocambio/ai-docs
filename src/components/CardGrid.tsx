@@ -20,27 +20,13 @@ const colsMap: Record<number, string> = {
   4: "sm:grid-cols-2 lg:grid-cols-4",
 };
 
-const cardStyle = {
-  background: "rgba(255, 255, 255, 0.30)",
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
-};
-
-const cardHoverStyle = {
-  background: "rgba(255, 255, 255, 0.50)",
-};
-
 export default function CardGrid({ cards, columns = 3 }: CardGridProps) {
   return (
     <div className={`grid grid-cols-1 ${colsMap[columns]} gap-4 sm:gap-5`}>
       {cards.map((card, i) => {
         const inner = (
-          <div
-            className="h-full flex flex-col p-4 sm:p-5 rounded-xl border border-neutral-200/50 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.99] transition-all duration-200 group"
-            style={cardStyle}
-            onMouseEnter={e => Object.assign((e.currentTarget as HTMLElement).style, cardHoverStyle)}
-            onMouseLeave={e => Object.assign((e.currentTarget as HTMLElement).style, cardStyle)}
-          >
+          <div className="card-glass h-full flex flex-col p-4 sm:p-5 rounded-xl border border-neutral-200/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
+
             {(card.icon || card.tag) && (
               <div className="flex items-center justify-between mb-3 gap-2">
                 {card.icon && (

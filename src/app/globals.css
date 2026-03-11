@@ -3,34 +3,61 @@
 @tailwind components;
 @tailwind utilities;
 
-/* -da chatGPT- classe globale vetro / glass effect */
-.glass-section {
-  @apply bg-white/50 rounded-lg;
+/* ── Glass effect — usato da CardGrid, DefinitionBlock, CompareTable, CodeBlock ── */
+/* Inline style per background+blur, CSS per hover — evita event handlers nei Server Components */
+
+.card-glass {
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
+.card-glass:hover {
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.block-glass {
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.block-glass-header {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.block-glass-pre {
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.block-glass-caption {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.block-glass-row:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* legacy */
+.glass-section {
+  background: rgba(255, 255, 255, 0.50);
+  border-radius: 0.5rem;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
   --header-height: 64px;
 }
+
 @keyframes bounce-scroll {
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(4px);
-  }
-  60% {
-    transform: translateY(2px);
-  }
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(4px); }
+  60% { transform: translateY(2px); }
 }
 
 .animate-bounce-scroll {
   animation: bounce-scroll 1.2s infinite;
-  will-change: transform; /* -da chatGPT- ottimizzazione performance animazione */
+  will-change: transform;
 }
 
 body {

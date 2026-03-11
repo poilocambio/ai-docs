@@ -22,24 +22,6 @@ type CodeBlockProps = {
   caption?: string;
 };
 
-const containerStyle = {
-  background: "rgba(255, 255, 255, 0.28)",
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
-};
-
-const toolbarStyle = {
-  background: "rgba(255, 255, 255, 0.18)",
-};
-
-const preStyle = {
-  background: "rgba(255, 255, 255, 0.40)",
-};
-
-const captionStyle = {
-  background: "rgba(255, 255, 255, 0.12)",
-};
-
 export default function CodeBlock({
   code,
   language = "python",
@@ -67,15 +49,10 @@ export default function CodeBlock({
   }, [code]);
 
   return (
-    <div
-      className="rounded-xl border border-neutral-200/50 overflow-hidden text-sm"
-      style={containerStyle}
-    >
+    <div className="block-glass rounded-xl border border-neutral-200/50 overflow-hidden text-sm">
+
       {/* Toolbar */}
-      <div
-        className="flex items-center justify-between px-3 sm:px-4 py-2.5 border-b border-neutral-200/40 gap-2"
-        style={toolbarStyle}
-      >
+      <div className="block-glass-header flex items-center justify-between px-3 sm:px-4 py-2.5 border-b border-neutral-200/40 gap-2">
         <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
           <span className="hidden sm:block w-3 h-3 rounded-full bg-neutral-200 shrink-0" aria-hidden="true" />
           <span className="hidden sm:block w-3 h-3 rounded-full bg-neutral-200 shrink-0" aria-hidden="true" />
@@ -102,24 +79,15 @@ export default function CodeBlock({
       </div>
 
       {/* Codice */}
-      <pre
-        className="overflow-x-auto p-3 sm:p-4 m-0 text-xs sm:text-sm"
-        style={preStyle}
-      >
-        <code
-          ref={codeRef}
-          className={`language-${language} leading-relaxed`}
-        >
+      <pre className="block-glass-pre overflow-x-auto p-3 sm:p-4 m-0 text-xs sm:text-sm">
+        <code ref={codeRef} className={`language-${language} leading-relaxed`}>
           {code.trim()}
         </code>
       </pre>
 
       {/* Caption */}
       {caption && (
-        <div
-          className="px-3 sm:px-4 py-2 border-t border-neutral-100/40"
-          style={captionStyle}
-        >
+        <div className="block-glass-caption px-3 sm:px-4 py-2 border-t border-neutral-100/40">
           <p className="text-xs text-neutral-400 leading-relaxed">{caption}</p>
         </div>
       )}
