@@ -9,7 +9,7 @@ import CompareTable from "@/components/CompareTable";
 export const metadata: Metadata = {
   title: "Progetto MNIST",
   description:
-    "Costruire una rete neurale per il riconoscimento di cifre scritte a mano con Python e PyTorch.",
+    "Un riconoscitore di cifre scritte a mano costruito con scikit-learn e un'interfaccia grafica Tkinter — dal training del modello al disegno in tempo reale.",
 };
 
 export default function ProgettoMNIST() {
@@ -22,422 +22,365 @@ export default function ProgettoMNIST() {
           {/* ── INTRO ─────────────────────────────────────────────────── */}
           <ArticleSection
             tag="Panoramica"
-            title="Riconoscere cifre scritte a mano"
-            subtitle="MNIST è il 'Hello World' del deep learning — semplice abbastanza da capire, complesso abbastanza da insegnare tutto il necessario."
+            title="Disegnare e riconoscere cifre in tempo reale"
+            subtitle="Un progetto completo: training del modello, salvataggio su disco e interfaccia grafica per testarlo a mano."
           >
             <p>
-              Il dataset MNIST contiene 70.000 immagini in scala di grigi
-              di cifre scritte a mano (0–9), ciascuna di 28×28 pixel.
-              60.000 sono usate per il training, 10.000 per il test.
-              È il punto di partenza classico per chiunque voglia capire
-              concretamente come funziona una rete neurale.
+              Il progetto è un'applicazione desktop Python che combina
+              due cose: un modello di machine learning addestrato sul
+              dataset MNIST, e un'interfaccia grafica che permette di
+              disegnare cifre con il mouse e vederle classificate in
+              tempo reale.
             </p>
             <p>
-              In questo progetto costruiamo una rete neurale feed-forward
-              da zero con PyTorch, la addestriamo su MNIST e analizziamo
-              i risultati. Ogni passo del codice corrisponde a un concetto
-              teorico — l'obiettivo non è solo far funzionare il modello,
-              ma capire perché funziona.
+              È costruito con <strong>scikit-learn</strong> per il modello
+              (un MLP — Multi-Layer Perceptron), <strong>Tkinter</strong>
+              per la GUI e <strong>Pillow</strong> per gestire
+              il canvas di disegno. Il modello viene addestrato una sola
+              volta e salvato su disco: i run successivi lo caricano
+              direttamente, senza re-addestrare.
             </p>
           </ArticleSection>
 
           {/* ── SETUP ─────────────────────────────────────────────────── */}
           <ArticleSection
             tag="Setup"
-            title="Dipendenze e importazioni"
-            subtitle="Tutto quello che serve per iniziare."
+            title="Dipendenze"
+            subtitle="Tutto gira sulla standard library di Python più quattro pacchetti."
           >
             <p>
-              Il progetto usa PyTorch come framework principale e
-              torchvision per scaricare e preprocessare MNIST automaticamente.
-              Matplotlib serve solo per visualizzare qualche esempio durante
-              l'analisi — non è necessario per il training.
+              A differenza di un approccio con PyTorch o TensorFlow,
+              questo progetto usa scikit-learn — più semplice da installare
+              e sufficiente per un MLP su MNIST. Tkinter è inclusa
+              nella maggior parte delle distribuzioni Python standard.
             </p>
           </ArticleSection>
 
           <CodeBlock
             language="bash"
             filename="terminale"
-            caption="Installa le dipendenze nel tuo ambiente virtuale."
-            code={`pip install torch torchvision matplotlib`}
+            caption="Installa le dipendenze. tkinter è già inclusa in Python — se manca, installa il pacchetto python3-tk dal tuo package manager."
+            code={`pip install scikit-learn numpy pillow joblib`}
           />
 
           <CodeBlock
             language="python"
             filename="mnist.py"
-            caption="Importazioni necessarie. torch.nn contiene i layer, torch.optim gli ottimizzatori."
-            code={`import torch
-import torch.nn as nn
-import torch.optim as optim
-from torchvision import datasets, transforms
-from torch.utils.data import DataLoader
-import matplotlib.pyplot as plt`}
+            caption="Le importazioni. os e joblib gestiscono il salvataggio del modello su disco; tkinter e PIL costruiscono l'interfaccia grafica."
+            code={`import os
+import numpy as np
+import joblib
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageDraw
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.neural_network import MLPClassifier`}
           />
 
-          {/* ── DATASET ───────────────────────────────────────────────── */}
+          {/* ── CARICAMENTO / TRAINING ────────────────────────────────── */}
           <ArticleSection
-            tag="Dati"
-            title="Caricare e preprocessare MNIST"
-            subtitle="Prima di costruire il modello, bisogna capire i dati."
+            tag="Modello"
+            title="Training e persistenza"
+            subtitle="Il modello si addestra una volta sola — poi viene salvato e ricaricato automaticamente."
           >
             <p>
-              Ogni immagine MNIST è una matrice 28×28 di valori tra 0 e 255.
-              Prima di passarla alla rete la normalizziamo: sottraiamo la
-              media del dataset (0.1307) e dividiamo per la deviazione standard
-              (0.3081). Questo porta i valori in un range centrato intorno a 0,
-              che rende il training più stabile numericamente.
+              La funzione <code>load_or_train_model()</code> implementa
+              un pattern semplice ma efficace: controlla se esiste già
+              un file <code>.pkl</code> nella cartella <code>dataset/</code>.
+              Se sì, lo carica con joblib in pochi millisecondi.
+              Se no, scarica MNIST, addestra il modello e lo salva —
+              includendo l'accuratezza nel nome del file per tenere traccia
+              delle versioni.
             </p>
             <p>
-              Il <strong>DataLoader</strong> gestisce il batching automaticamente:
-              invece di passare tutte le 60.000 immagini insieme (impossibile
-              in memoria), le raggruppa in mini-batch da 64 e le mescola ad
-              ogni epoca per evitare che l'ordine influenzi il training.
+              Il dataset viene scaricato automaticamente da OpenML
+              tramite scikit-learn: 70.000 immagini 28×28 in scala di
+              grigi, normalizzate dividendo i pixel per 255
+              per portarli nell'intervallo [0, 1].
             </p>
           </ArticleSection>
 
           <CodeBlock
             language="python"
             filename="mnist.py"
-            caption="transform.Compose applica le trasformazioni in sequenza: prima converte in tensore, poi normalizza."
-            code={`# Trasformazione: pixel [0,255] → tensore normalizzato
-transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((0.1307,), (0.3081,))
-])
+            caption="Se il modello esiste già su disco viene caricato, altrimenti viene addestrato da zero. Il nome del file salvato include l'accuratezza media della cross-validation."
+            code={`DATASET_DIR = "dataset"
+os.makedirs(DATASET_DIR, exist_ok=True)
 
-# Download automatico nella cartella ./data
-train_dataset = datasets.MNIST(
-    root='./data',
-    train=True,
-    download=True,
-    transform=transform
-)
+MODEL_FILENAME = os.path.join(DATASET_DIR, "mlp_mnist_model_numpy_0.2.pkl")
 
-test_dataset = datasets.MNIST(
-    root='./data',
-    train=False,
-    download=True,
-    transform=transform
-)
+def load_or_train_model():
+    if os.path.exists(MODEL_FILENAME):
+        print(f"Caricamento modello da {MODEL_FILENAME}...")
+        return joblib.load(MODEL_FILENAME)
 
-# DataLoader: batch da 64, shuffle solo nel training
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-test_loader  = DataLoader(test_dataset,  batch_size=64, shuffle=False)
+    print("Caricamento dataset MNIST...")
+    mnist = fetch_openml('mnist_784', version=1)
+    X, y = mnist.data / 255.0, mnist.target.astype(int)
 
-print(f"Training samples: {len(train_dataset)}")  # 60000
-print(f"Test samples:     {len(test_dataset)}")   # 10000
-print(f"Input shape:      {train_dataset[0][0].shape}")  # [1, 28, 28]`}
-          />
+    # fetch_openml restituisce DataFrame — convertiamo in NumPy
+    X = X.values if hasattr(X, 'values') else X
+    y = y.values if hasattr(y, 'values') else y
 
-          <CodeBlock
-            language="python"
-            filename="mnist.py"
-            caption="Visualizza qualche esempio per capire il dataset prima di addestrare."
-            code={`# Visualizza i primi 10 esempi
-fig, axes = plt.subplots(1, 10, figsize=(15, 2))
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
 
-for i in range(10):
-    image, label = train_dataset[i]
-    axes[i].imshow(image.squeeze(), cmap='gray')
-    axes[i].set_title(str(label))
-    axes[i].axis('off')
+    mlp = MLPClassifier(
+        hidden_layer_sizes=(256, 128),
+        activation="relu",
+        solver="adam",
+        max_iter=500,
+        learning_rate="adaptive",
+        early_stopping=True,
+        alpha=0.0001,
+        random_state=42,
+        tol=1e-5
+    )
 
-plt.tight_layout()
-plt.show()`}
-          />
+    print("Addestramento modello...")
+    mlp.fit(X_train, y_train)
 
-          {/* ── ARCHITETTURA ──────────────────────────────────────────── */}
-          <ArticleSection
-            tag="Architettura"
-            title="La rete neurale"
-            subtitle="Una rete feed-forward con due layer nascosti — semplice ma efficace."
-          >
-            <p>
-              L'architettura che usiamo è una rete fully connected (dense):
-              ogni neurone di un layer è connesso a ogni neurone del layer
-              successivo. L'immagine 28×28 viene prima "appiattita" in un
-              vettore di 784 valori, che poi attraversa due hidden layer
-              prima di arrivare all'output.
-            </p>
-            <p>
-              Ogni hidden layer usa <strong>ReLU</strong> come funzione di
-              attivazione. ReLU (Rectified Linear Unit) è semplicissima:
-              restituisce il valore se positivo, 0 altrimenti. La sua
-              semplicità la rende computazionalmente efficiente e aiuta
-              a evitare il problema del vanishing gradient nelle reti profonde.
-            </p>
-            <p>
-              L'output layer ha 10 neuroni — uno per cifra (0–9).
-              Non applichiamo softmax qui perché la funzione di loss
-              <code> CrossEntropyLoss</code> di PyTorch la include
-              internamente, il che è numericamente più stabile.
-            </p>
-          </ArticleSection>
+    # Cross-validation su 5 fold per una stima robusta dell'accuratezza
+    scores = cross_val_score(mlp, X, y, cv=5)
+    mean_accuracy = scores.mean()
+    print(f"Accuratezza media: {mean_accuracy:.4f}")
 
-          <CodeBlock
-            language="python"
-            filename="mnist.py"
-            caption="nn.Sequential costruisce la rete come una pipeline lineare di layer. view(-1, 784) appiattisce il tensore 28×28 in un vettore 1D."
-            code={`class MNISTNet(nn.Module):
-    def __init__(self):
-        super(MNISTNet, self).__init__()
-        self.network = nn.Sequential(
-            nn.Flatten(),           # [batch, 1, 28, 28] → [batch, 784]
-            nn.Linear(784, 256),    # primo hidden layer: 784 → 256 neuroni
-            nn.ReLU(),
-            nn.Dropout(0.2),        # disattiva casualmente il 20% dei neuroni
-            nn.Linear(256, 128),    # secondo hidden layer: 256 → 128 neuroni
-            nn.ReLU(),
-            nn.Dropout(0.2),
-            nn.Linear(128, 10),     # output layer: 10 classi (cifre 0-9)
-        )
+    # Nome file con accuratezza incorporata — utile per confrontare versioni
+    model_filename = os.path.join(DATASET_DIR, f"mlp_mnist_acc_{mean_accuracy:.4f}.pkl")
+    joblib.dump(mlp, model_filename)
+    print(f"Modello salvato in {model_filename}")
 
-    def forward(self, x):
-        return self.network(x)
-
-
-# Usa GPU se disponibile, altrimenti CPU
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model  = MNISTNet().to(device)
-
-# Conta i parametri totali
-total_params = sum(p.numel() for p in model.parameters())
-print(f"Parametri totali: {total_params:,}")  # ~235,146`}
+    return mlp`}
           />
 
           <DefinitionBlock
-            title="Componenti dell'architettura"
+            title="Parametri del MLPClassifier"
             definitions={[
               {
-                term: "nn.Flatten()",
+                term: "hidden_layer_sizes",
                 definition:
-                  "Trasforma il tensore di input da [batch, 1, 28, 28] a [batch, 784]. Necessario perché i layer Linear lavorano su vettori 1D, non matrici.",
+                  "(256, 128) — due hidden layer con 256 e 128 neuroni rispettivamente. L'input è 784 (28×28 pixel appiattiti), l'output 10 classi (cifre 0–9).",
               },
               {
-                term: "nn.Linear(in, out)",
+                term: "activation",
                 definition:
-                  "Layer fully connected. Apprende una matrice di pesi (in × out) e un vettore di bias (out). È la moltiplicazione matriciale al cuore di ogni rete dense.",
+                  "ReLU (Rectified Linear Unit): f(x) = max(0, x). Introduce non-linearità senza parametri aggiuntivi. Standard per reti dense moderne.",
               },
               {
-                term: "nn.ReLU()",
+                term: "solver",
                 definition:
-                  "Funzione di attivazione: f(x) = max(0, x). Introduce non-linearità senza parametri aggiuntivi. Senza di essa, l'intera rete collasserebbe in una singola trasformazione lineare.",
+                  "Adam — ottimizzatore adattivo che aggiusta automaticamente il learning rate per ogni parametro. Converge più velocemente di SGD classico su dataset come MNIST.",
               },
               {
-                term: "nn.Dropout(p)",
+                term: "early_stopping",
                 definition:
-                  "Durante il training, disattiva casualmente una frazione p dei neuroni ad ogni forward pass. Riduce l'overfitting forzando la rete a non dipendere da singoli neuroni.",
-                also: "regularizzazione",
+                  "Ferma il training se la loss sul validation set smette di migliorare. Previene l'overfitting senza dover fissare manualmente il numero di epoche.",
+                also: "arresto anticipato",
+              },
+              {
+                term: "alpha",
+                definition:
+                  "Termine di regolarizzazione L2 (weight decay). Penalizza pesi troppo grandi, riducendo l'overfitting. 0.0001 è un valore conservativo.",
+              },
+              {
+                term: "cross_val_score",
+                definition:
+                  "Divide il dataset in 5 parti (fold), addestra su 4 e valuta sulla quinta, ripetendo il processo 5 volte. La media dei 5 score è una stima più robusta dell'accuratezza reale rispetto a un singolo train/test split.",
               },
             ]}
           />
 
-          {/* ── TRAINING ──────────────────────────────────────────────── */}
+          {/* ── GUI ───────────────────────────────────────────────────── */}
           <ArticleSection
-            tag="Training"
-            title="Addestrare il modello"
-            subtitle="Il ciclo training — forward pass, calcolo della loss, backward pass, aggiornamento pesi."
+            tag="Interfaccia"
+            title="La GUI Tkinter"
+            subtitle="Un canvas su cui disegnare con il mouse — la predizione avviene al click di un bottone."
           >
             <p>
-              Il training avviene in <strong>epoche</strong>: un'epoca è un
-              passaggio completo su tutto il dataset di training. Ad ogni
-              batch eseguiamo quattro operazioni fondamentali:
+              L'interfaccia è costruita con Tkinter, il toolkit GUI
+              incluso nella standard library di Python. Il canvas è
+              doppio: uno visivo (il <code>tk.Canvas</code> che l'utente
+              vede) e uno invisibile (un'immagine Pillow in memoria
+              <code> Image</code>) che viene usato per il preprocessing.
             </p>
             <p>
-              1. <strong>Forward pass</strong> — i dati attraversano la rete
-              e producono predizioni. 2. <strong>Loss</strong> — misuriamo
-              quanto le predizioni si discostano dalle etichette reali.
-              3. <strong>Backward pass</strong> — calcoliamo il gradiente
-              della loss rispetto a ogni peso (backpropagation).
-              4. <strong>Optimizer step</strong> — aggiorniamo i pesi nella
-              direzione che riduce la loss.
+              Quando l'utente disegna, ogni movimento del mouse
+              crea un cerchio bianco di raggio 12 su entrambi i canvas
+              in sincronia. Al click su <em>Predict</em>, l'immagine
+              Pillow viene ridimensionata a 28×28, normalizzata e
+              passata al modello.
             </p>
           </ArticleSection>
 
           <CodeBlock
             language="python"
             filename="mnist.py"
-            caption="Adam è un ottimizzatore adattivo che aggiusta automaticamente il learning rate per ogni parametro. CrossEntropyLoss combina log-softmax e negative log-likelihood in un'unica operazione numericamente stabile."
-            code={`criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+            caption="La classe estende tk.Tk direttamente — l'istanza è sia il modello che la finestra. Il canvas Pillow in memoria è la chiave per il preprocessing corretto."
+            code={`class DigitRecognizerApp(tk.Tk):
+    def __init__(self, model):
+        super().__init__()
+        self.title("Digit Recognizer")
+        self.geometry("350x400")
+        self.configure(bg="#2e2e2e")
+        self.model = model
 
-def train_epoch(model, loader, criterion, optimizer, device):
-    model.train()  # attiva dropout e batch norm
-    total_loss    = 0
-    correct       = 0
-    total_samples = 0
+        self.canvas_size = 280
+        self.canvas = tk.Canvas(
+            self, width=self.canvas_size, height=self.canvas_size, bg="black"
+        )
+        self.canvas.pack(pady=10)
 
-    for images, labels in loader:
-        images, labels = images.to(device), labels.to(device)
+        # Canvas Pillow in memoria — usato per l'inferenza
+        self.image = Image.new("L", (self.canvas_size, self.canvas_size), 0)
+        self.draw  = ImageDraw.Draw(self.image)
 
-        optimizer.zero_grad()        # azzera i gradienti precedenti
-        outputs = model(images)      # forward pass
-        loss    = criterion(outputs, labels)  # calcola la loss
-        loss.backward()              # backward pass (calcola gradienti)
-        optimizer.step()             # aggiorna i pesi
+        self.canvas.bind("<B1-Motion>", self.paint)
 
-        total_loss    += loss.item()
-        predicted      = outputs.argmax(dim=1)
-        correct       += (predicted == labels).sum().item()
-        total_samples += labels.size(0)
+        btn_frame = tk.Frame(self, bg="#2e2e2e")
+        btn_frame.pack()
 
-    avg_loss = total_loss / len(loader)
-    accuracy = correct / total_samples * 100
-    return avg_loss, accuracy`}
+        self.predict_btn = ttk.Button(btn_frame, text="Predict", command=self.predict_digit)
+        self.predict_btn.grid(row=0, column=0, padx=10)
+
+        self.clear_btn = ttk.Button(btn_frame, text="Clear", command=self.clear_canvas)
+        self.clear_btn.grid(row=0, column=1, padx=10)
+
+        self.label = tk.Label(
+            self, text="Disegna un numero",
+            fg="white", bg="#2e2e2e", font=("Arial", 14)
+        )
+        self.label.pack(pady=10)`}
           />
 
           <CodeBlock
             language="python"
             filename="mnist.py"
-            caption="model.eval() disattiva dropout e batch norm durante la valutazione. torch.no_grad() evita di calcolare gradienti, riducendo uso di memoria e velocizzando l'inferenza."
-            code={`def evaluate(model, loader, criterion, device):
-    model.eval()
-    total_loss    = 0
-    correct       = 0
-    total_samples = 0
+            caption="paint() scrive simultaneamente sul canvas visivo e su quello Pillow. predict_digit() fa il preprocessing e interroga il modello."
+            code={`    def paint(self, event):
+        x, y = event.x, event.y
+        r = 12  # raggio del pennello
+        # Disegna sul canvas visivo
+        self.canvas.create_oval(x-r, y-r, x+r, y+r, fill="white", outline="white")
+        # Disegna sul canvas Pillow (usato per l'inferenza)
+        self.draw.ellipse([x-r, y-r, x+r, y+r], fill="white")
 
-    with torch.no_grad():
-        for images, labels in loader:
-            images, labels = images.to(device), labels.to(device)
-            outputs   = model(images)
-            loss      = criterion(outputs, labels)
-            total_loss    += loss.item()
-            predicted      = outputs.argmax(dim=1)
-            correct       += (predicted == labels).sum().item()
-            total_samples += labels.size(0)
+    def clear_canvas(self):
+        self.canvas.delete("all")
+        self.image = Image.new("L", (self.canvas_size, self.canvas_size), 0)
+        self.draw  = ImageDraw.Draw(self.image)
 
-    return total_loss / len(loader), correct / total_samples * 100
+    def predict_digit(self):
+        # Ridimensiona a 28x28, normalizza in [0,1], appiattisce in vettore 1D
+        img = np.array(self.image.resize((28, 28)).convert("L")) / 255.0
+        img = img.flatten().reshape(1, -1)
+        prediction = self.model.predict(img)[0]
+        self.label.config(text=f"Predizione: {prediction}")
 
 
-# Loop di training principale
-NUM_EPOCHS = 10
-
-for epoch in range(1, NUM_EPOCHS + 1):
-    train_loss, train_acc = train_epoch(model, train_loader, criterion, optimizer, device)
-    test_loss,  test_acc  = evaluate(model, test_loader, criterion, device)
-
-    print(
-        f"Epoch {epoch:2d}/{NUM_EPOCHS} | "
-        f"Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}% | "
-        f"Test Loss: {test_loss:.4f}  | Test Acc: {test_acc:.2f}%"
-    )`}
+if __name__ == "__main__":
+    model = load_or_train_model()
+    app   = DigitRecognizerApp(model)
+    app.mainloop()`}
           />
 
-          {/* ── RISULTATI ─────────────────────────────────────────────── */}
+          {/* ── PREPROCESSING ─────────────────────────────────────────── */}
           <ArticleSection
-            tag="Risultati"
-            title="Output atteso"
-            subtitle="Con questa architettura dovresti raggiungere circa 97–98% di accuratezza sul test set in poche epoche."
+            tag="Preprocessing"
+            title="Dal canvas al modello"
+            subtitle="Il gap tra come l'utente disegna e come MNIST è stato costruito."
           >
             <p>
-              Il training su CPU richiede 2–5 minuti per 10 epoche.
-              Su GPU (anche una consumer come una RTX 3060) scende sotto
-              il minuto. L'accuratezza migliora rapidamente nelle prime
-              3–4 epoche, poi rallenta.
+              C'è un aspetto critico da capire in questo progetto: il
+              modello è stato addestrato su immagini MNIST scritte a mano
+              su carta, scansionate e centrate. Il canvas dell'app invece
+              produce tratti spessi su sfondo nero in un'area 280×280.
+            </p>
+            <p>
+              Il passaggio <code>.resize((28, 28))</code> di Pillow
+              comprime l'immagine usando interpolazione bilineare, che
+              produce sfumature di grigio ai bordi dei tratti — simili
+              all'anti-aliasing delle cifre MNIST originali. Il raggio
+              del pennello (12px su un canvas 280px) è stato scelto
+              appositamente per avere proporzioni simili a quelle
+              del dataset dopo il ridimensionamento.
+            </p>
+            <p>
+              Se i risultati sono inaccurati, spesso il motivo è che
+              la cifra è disegnata troppo piccola, troppo in un angolo,
+              o con un tratto troppo sottile rispetto a come MNIST
+              è stato costruito.
             </p>
           </ArticleSection>
 
-          <CodeBlock
-            language="python"
-            filename="output.txt"
-            caption="Output tipico su CPU. I valori possono variare leggermente per via dell'inizializzazione casuale dei pesi."
-            code={`Epoch  1/10 | Train Loss: 0.2941 | Train Acc: 91.23% | Test Loss: 0.1312  | Test Acc: 95.87%
-Epoch  2/10 | Train Loss: 0.1298 | Train Acc: 96.11% | Test Loss: 0.0981  | Test Acc: 96.94%
-Epoch  3/10 | Train Loss: 0.0961 | Train Acc: 97.08% | Test Loss: 0.0842  | Test Acc: 97.41%
-Epoch  4/10 | Train Loss: 0.0789 | Train Acc: 97.58% | Test Loss: 0.0751  | Test Acc: 97.68%
-Epoch  5/10 | Train Loss: 0.0672 | Train Acc: 97.94% | Test Loss: 0.0734  | Test Acc: 97.72%
-Epoch  6/10 | Train Loss: 0.0581 | Train Acc: 98.18% | Test Loss: 0.0701  | Test Acc: 97.89%
-Epoch  7/10 | Train Loss: 0.0511 | Train Acc: 98.38% | Test Loss: 0.0698  | Test Acc: 97.93%
-Epoch  8/10 | Train Loss: 0.0453 | Train Acc: 98.57% | Test Loss: 0.0712  | Test Acc: 97.97%
-Epoch  9/10 | Train Loss: 0.0401 | Train Acc: 98.71% | Test Loss: 0.0723  | Test Acc: 98.01%
-Epoch 10/10 | Train Loss: 0.0364 | Train Acc: 98.82% | Test Loss: 0.0741  | Test Acc: 98.05%`}
-          />
-
+          {/* ── CONFRONTO ─────────────────────────────────────────────── */}
           <CompareTable
-            title="Confronto architetture su MNIST"
-            caption="Accuratezza sul test set. I tempi si riferiscono a training completo su CPU moderna."
-            columns={["Rete Dense (questa)", "CNN semplice", "CNN profonda"]}
+            title="scikit-learn MLPClassifier vs PyTorch su MNIST"
+            caption="Per un progetto didattico standalone con GUI, scikit-learn è la scelta giusta. PyTorch diventa necessario quando servono architetture più complesse o GPU."
+            columns={["scikit-learn MLP", "PyTorch NN"]}
             rows={[
               {
-                aspect: "Accuratezza",
-                values: ["~98%", "~99.2%", "~99.7%"],
+                aspect: "Installazione",
+                values: [
+                  "pip install scikit-learn — nessuna dipendenza CUDA",
+                  "Più pesante, versione CUDA separata per GPU",
+                ],
               },
               {
-                aspect: "Parametri",
-                values: ["~235K", "~93K", "~1.2M"],
+                aspect: "Accuratezza su MNIST",
+                values: ["~97–98% con (256,128)", "~98–99.7% con CNN"],
               },
               {
-                aspect: "Tempo training",
-                values: ["~3 min (CPU)", "~8 min (CPU)", "~25 min (CPU)"],
+                aspect: "Flessibilità architettura",
+                values: [
+                  "Solo layer densi (fully connected)",
+                  "Qualsiasi architettura: CNN, RNN, Transformer",
+                ],
               },
               {
-                aspect: "Complessità",
-                values: ["Bassa — ottima per imparare", "Media", "Alta"],
+                aspect: "Salvataggio modello",
+                values: [
+                  "joblib.dump() — un file .pkl",
+                  "torch.save(state_dict()) — file .pth",
+                ],
               },
               {
-                aspect: "Usa la struttura spaziale?",
-                values: ["No — appiattisce tutto", "Sì — convoluzioni locali", "Sì — con pooling e residual"],
+                aspect: "Integrazione con GUI Python",
+                values: [
+                  "Ottima — libreria Python pura, nessun conflitto",
+                  "Buona, ma import più pesanti",
+                ],
+              },
+              {
+                aspect: "Quando usarlo",
+                values: [
+                  "Prototipazione rapida, progetti standalone, didattica",
+                  "Ricerca, produzione, architetture profonde",
+                ],
               },
             ]}
-          />
-
-          {/* ── SALVATAGGIO ───────────────────────────────────────────── */}
-          <ArticleSection
-            tag="Deploy"
-            title="Salvare e usare il modello"
-            subtitle="Un modello addestrato è inutile se non puoi riutilizzarlo."
-          >
-            <p>
-              PyTorch permette di salvare sia i soli pesi (approccio
-              consigliato) che l'intero modello serializzato. Salvare solo
-              i pesi è più robusto perché non dipende dalla struttura
-              delle classi Python al momento del caricamento.
-            </p>
-          </ArticleSection>
-
-          <CodeBlock
-            language="python"
-            filename="mnist.py"
-            caption="state_dict() contiene solo i tensori dei pesi, non la struttura del modello. Per ricaricarli, devi prima istanziare la classe MNISTNet."
-            code={`# Salva i pesi
-torch.save(model.state_dict(), "mnist_model.pth")
-
-# Carica in seguito
-loaded_model = MNISTNet().to(device)
-loaded_model.load_state_dict(torch.load("mnist_model.pth", map_location=device))
-loaded_model.eval()
-
-# Inferenza su una singola immagine
-image, true_label = test_dataset[0]
-image = image.unsqueeze(0).to(device)  # aggiunge dimensione batch: [1, 1, 28, 28]
-
-with torch.no_grad():
-    output     = loaded_model(image)
-    predicted  = output.argmax(dim=1).item()
-    confidence = torch.softmax(output, dim=1).max().item()
-
-print(f"Predetto: {predicted} | Reale: {true_label} | Confidenza: {confidence:.1%}")`}
           />
 
           {/* ── CONCLUSIONE ───────────────────────────────────────────── */}
           <ArticleSection
             tag="Conclusione"
-            title="Cosa hai imparato costruendo questo"
+            title="Cosa dimostra questo progetto"
           >
             <p>
-              MNIST sembra un problema semplice, e lo è — ma costruirlo
-              da zero ti ha esposto a tutti i concetti fondamentali del
-              deep learning: preprocessing dei dati, definizione
-              dell'architettura, scelta della loss, ciclo di training
-              con backpropagation, valutazione, salvataggio.
+              Questo progetto tocca tutti gli elementi fondamentali
+              di un sistema ML reale: acquisizione e normalizzazione
+              dei dati, definizione e addestramento del modello,
+              valutazione con cross-validation, persistenza su disco
+              e deployment in un'applicazione interattiva.
             </p>
             <p>
-              Il passo successivo naturale è sostituire la rete dense
-              con una <strong>CNN</strong> (Convolutional Neural Network),
-              che sfrutta la struttura spaziale delle immagini e raggiunge
-              accuratezze vicine al 99.7% con meno parametri.
-              La struttura del codice — dataset, dataloader, modello,
-              training loop — rimane identica. Cambia solo l'architettura.
+              La scelta di scikit-learn invece di PyTorch non è una
+              scorciatoia — è una decisione di design. Per un MLP
+              su MNIST con GUI desktop, scikit-learn è lo strumento
+              giusto: meno complessità, stessa comprensione dei concetti.
+              La complessità di PyTorch ha senso quando serve
+              — non prima.
             </p>
           </ArticleSection>
 
