@@ -382,6 +382,18 @@ if __name__ == "__main__":
               La complessità di PyTorch ha senso quando serve
               — non prima.
             </p>
+            <p>
+              Il codice sorgente completo è disponibile su{" "}
+              <a
+                href="https://github.com/poilocambio/giochino_mnist"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-black font-medium underline underline-offset-2 hover:text-neutral-500 transition-colors"
+              >
+                github.com/poilocambio/giochino_mnist
+              </a>
+              .
+            </p>
           </ArticleSection>
 
         </div>
