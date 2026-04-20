@@ -134,16 +134,6 @@ export default function BiasResponsabilitaPage() {
               è già un concetto carico di presupposti su cosa conta come
               evidenza rilevante.
             </p>
-            <p>
-              Miranda Fricker introduce il concetto di <em>ingiustizia
-              epistemica</em>: il danno che si fa a qualcuno nella sua capacità
-              di conoscente. I sistemi algoritmici possono perpetrare questo
-              tipo di ingiustizia quando non considerano valide le informazioni
-              che vengono da certi soggetti — quando un sistema di credito
-              ignora la storia finanziaria informale delle comunità immigrate,
-              o quando un sistema di diagnosi è addestrato su studi clinici
-              che non includevano donne.
-            </p>
           </ArticleSection>
 
           {/* ── RESPONSABILITÀ ────────────────────────────────────────── */}
