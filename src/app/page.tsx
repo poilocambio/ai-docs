@@ -38,13 +38,13 @@ export default function HomePage() {
           </p>
         </section>
 
-        {/* ── LE TRE SEZIONI ────────────────────────────────────────── */}
+        {/* ── LE DUE SEZIONI ────────────────────────────────────────── */}
         <section>
           <h2 className="text-xs tracking-widest uppercase text-neutral-400 text-center mb-6 sm:mb-8">
             Cosa trovi qui
           </h2>
           <CardGrid
-            columns={3}
+            columns={2}
             cards={[
               {
                 title: "Fondamenti",
@@ -58,12 +58,7 @@ export default function HomePage() {
                   "Bias algoritmico, responsabilità delle decisioni automatiche e impatto dell'AI sulla società.",
                 href: "/etica",
               },
-              {
-                title: "Filosofia",
-                description:
-                  "Cos'è davvero l'intelligenza? Le macchine possono comprendere o stanno solo calcolando?",
-                tag: "In arrivo",
-              },
+             
             ]}
           />
         </section>
