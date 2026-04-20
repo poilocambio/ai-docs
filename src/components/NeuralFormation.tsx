@@ -24,12 +24,16 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
   }, [onComplete]);
 
   useEffect(() => {
-    const canvas = canvasRef.current!;
-    const ctx    = canvas.getContext("2d")!;
-    const dpr    = window.devicePixelRatio || 1;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const dpr = window.devicePixelRatio || 1;
 
     function getSize() {
-      const rect = canvas.parentElement!.getBoundingClientRect();
+      const parent = canvas!.parentElement;
+      if (!parent) return { W: window.innerWidth, H: window.innerHeight };
+      const rect = parent.getBoundingClientRect();
       return { W: Math.floor(rect.width), H: Math.floor(rect.height) };
     }
 
@@ -38,15 +42,14 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
 
     function applySize() {
       ({ W, H } = getSize());
-      canvas.width        = Math.round(W * dpr);
-      canvas.height       = Math.round(H * dpr);
-      canvas.style.width  = `${W}px`;
-      canvas.style.height = `${H}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      canvas!.width        = Math.round(W * dpr);
+      canvas!.height       = Math.round(H * dpr);
+      canvas!.style.width  = `${W}px`;
+      canvas!.style.height = `${H}px`;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     applySize();
 
-    // ── Layers — leggermente più piccoli ──────────────────────────────
     const layers = isMobile
       ? [
           { name: "Input",    count: 4 },
@@ -64,11 +67,8 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
 
     const totalNodes = layers.reduce((s, l) => s + l.count, 0);
 
-    // ── Layout — rete occupa il 70% centrale del canvas ───────────────
     const LABEL_SPACE = isMobile ? 26 : 32;
     const BOT_PAD     = isMobile ? 24 : 32;
-
-    // Padding orizzontale generoso per centrare bene la rete
     const SIDE_PAD = isMobile ? W * 0.10 : W * 0.18;
 
     const drawH   = H - LABEL_SPACE - BOT_PAD;
@@ -81,7 +81,6 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
     const autoSize    = Math.min(maxNodeSize, Math.floor((drawH / maxCount - minGap) / 2));
     const NODE_SIZE   = Math.max(3, autoSize);
 
-    // Ogni layer centra i nodi verticalmente in modo indipendente
     function buildTargets() {
       const t: { x: number; y: number }[] = [];
       layers.forEach((layer, li) => {
@@ -116,7 +115,7 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
       const phase   = phaseRef.current;
       const elapsed = now - phaseStart.current;
 
-      ctx.clearRect(0, 0, W, H);
+      ctx!.clearRect(0, 0, W, H);
 
       if (phase === "chaos") {
         chaos.forEach((c, i) => {
@@ -153,7 +152,7 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
         : phase === "settling" ? Math.min(1, elapsed / SETTLE_DURATION) : 1;
 
       if (connAlpha > 0) {
-        ctx.lineWidth = 0.7;
+        ctx!.lineWidth = 0.7;
         let ni = 0;
         layers.forEach((layer, li) => {
           if (li === layers.length - 1) return;
@@ -162,11 +161,11 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
             for (let j = 0; j < next.count; j++) {
               const a = pos[ni + i];
               const b = pos[ni + layer.count + j];
-              ctx.beginPath();
-              ctx.moveTo(a.x, a.y);
-              ctx.lineTo(b.x, b.y);
-              ctx.strokeStyle = `rgba(160,160,160,${connAlpha * 0.28})`;
-              ctx.stroke();
+              ctx!.beginPath();
+              ctx!.moveTo(a.x, a.y);
+              ctx!.lineTo(b.x, b.y);
+              ctx!.strokeStyle = `rgba(160,160,160,${connAlpha * 0.28})`;
+              ctx!.stroke();
             }
           }
           ni += layer.count;
@@ -181,24 +180,27 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
           : NODE_SIZE;
 
       pos.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, currentNodeSize, 0, Math.PI * 2);
-        ctx.fillStyle = "#1a1a1a";
-        ctx.fill();
+        ctx!.beginPath();
+        ctx!.arc(p.x, p.y, currentNodeSize, 0, Math.PI * 2);
+        ctx!.fillStyle = "#1a1a1a";
+        ctx!.fill();
       });
 
       // Etichette
       const lblAlpha = phase === "done" ? Math.min(1, elapsed / LABEL_DURATION) : 0;
       if (lblAlpha > 0) {
-        ctx.fillStyle = `rgba(120,120,120,${lblAlpha})`;
-        ctx.textAlign = "center";
-        ctx.font = `${isMobile ? 9 : 10}px ui-monospace, monospace`;
+        ctx!.fillStyle = `rgba(120,120,120,${lblAlpha})`;
+        ctx!.textAlign = "center";
+        ctx!.font = `${isMobile ? 9 : 10}px ui-monospace, monospace`;
         let ni = 0;
         layers.forEach(layer => {
-          ctx.fillText(layer.name, targets[ni].x, LABEL_SPACE - 8);
+          ctx!.fillText(layer.name, targets[ni].x, LABEL_SPACE - 8);
           ni += layer.count;
         });
-        if (lblAlpha >= 1) triggerComplete();
+        if (lblAlpha >= 1) {
+          triggerComplete();
+          return; // stop scheduling new frames — animation is fully complete
+        }
       }
 
       rafId.current = requestAnimationFrame(draw);
@@ -207,7 +209,7 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
     rafId.current = requestAnimationFrame(draw);
 
     const ro = new ResizeObserver(applySize);
-    ro.observe(canvas.parentElement!);
+    if (canvas.parentElement) ro.observe(canvas.parentElement);
 
     return () => {
       cancelAnimationFrame(rafId.current);

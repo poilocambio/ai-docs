@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import hljs from "highlight.js/lib/core";
 import python from "highlight.js/lib/languages/python";
 import typescript from "highlight.js/lib/languages/typescript";
@@ -29,6 +29,7 @@ export default function CodeBlock({
   caption,
 }: CodeBlockProps) {
   const codeRef = useRef<HTMLElement>(null);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -38,11 +39,18 @@ export default function CodeBlock({
     hljs.highlightElement(el);
   }, [code, language]);
 
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    };
+  }, []);
+
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(code.trim());
       setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = setTimeout(() => setCopied(false), 1500);
     } catch {
       // fallback silenzioso
     }
@@ -65,7 +73,7 @@ export default function CodeBlock({
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          <span className="text-xs tracking-widest uppercase text-neutral-400 hidden xs:block">
+          <span className="text-xs tracking-widest uppercase text-neutral-400 hidden sm:block">
             {language}
           </span>
           <button

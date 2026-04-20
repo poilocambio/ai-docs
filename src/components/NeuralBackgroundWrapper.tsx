@@ -1,4 +1,4 @@
-"use client"; // -da chatGPT- necessario per usare dynamic con ssr: false
+"use client";
 import dynamic from "next/dynamic";
 
 const NeuralBackground = dynamic(

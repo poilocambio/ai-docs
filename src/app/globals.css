@@ -1,7 +1,4 @@
 @import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* ── Glass effect — usato da CardGrid, DefinitionBlock, CompareTable, CodeBlock ── */
 /* Inline style per background+blur, CSS per hover — evita event handlers nei Server Components */
@@ -37,16 +34,11 @@
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* legacy */
-.glass-section {
-  background: rgba(255, 255, 255, 0.50);
-  border-radius: 0.5rem;
-}
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
   --header-height: 64px;
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 @keyframes bounce-scroll {

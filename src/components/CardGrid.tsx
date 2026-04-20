@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import Link from "next/link";
 
 type Card = {
@@ -14,7 +14,7 @@ type CardGridProps = {
   columns?: 2 | 3 | 4;
 };
 
-const colsMap: Record<number, string> = {
+const colsMap: Record<2 | 3 | 4, string> = {
   2: "sm:grid-cols-2",
   3: "sm:grid-cols-2 lg:grid-cols-3",
   4: "sm:grid-cols-2 lg:grid-cols-4",
@@ -24,8 +24,10 @@ export default function CardGrid({ cards, columns = 3 }: CardGridProps) {
   return (
     <div className={`grid grid-cols-1 ${colsMap[columns]} gap-4 sm:gap-5`}>
       {cards.map((card, i) => {
+        const isDisabled = !card.href;
+
         const inner = (
-          <div className="card-glass h-full flex flex-col p-4 sm:p-5 rounded-xl border border-neutral-200/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
+          <div className={`card-glass h-full flex flex-col p-4 sm:p-5 rounded-xl border border-neutral-200/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group ${isDisabled ? "opacity-60 cursor-default" : ""}`}>
 
             {(card.icon || card.tag) && (
               <div className="flex items-center justify-between mb-3 gap-2">
@@ -64,7 +66,7 @@ export default function CardGrid({ cards, columns = 3 }: CardGridProps) {
             {inner}
           </Link>
         ) : (
-          <div key={i}>{inner}</div>
+          <div key={i} aria-disabled="true">{inner}</div>
         );
       })}
     </div>

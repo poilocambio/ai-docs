@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 import DefaultPage from "@/components/DefaultPage";
 import ArticleSection from "@/components/ArticleSection";
@@ -26,9 +25,9 @@ export default function EticaPage() {
             subtitle="Quando un sistema decide, chi è responsabile?"
           >
             <p>
-              Per la maggior parte della storia dell'informatica, i programmi
+              Per la maggior parte della storia dell&apos;informatica, i programmi
               eseguivano esattamente quello che un programmatore aveva scritto.
-              La responsabilità era chiara: se qualcosa andava storto, c'era
+              La responsabilità era chiara: se qualcosa andava storto, c&apos;era
               una riga di codice da cui ricominciare.
             </p>
             <p>
@@ -41,48 +40,34 @@ export default function EticaPage() {
               precedenti nella storia della tecnologia.
             </p>
             <p>
-              L'etica dell'IA non è un freno allo sviluppo tecnologico.
+              L&apos;etica dell&apos;IA non è un freno allo sviluppo tecnologico.
               È il tentativo di capire quali valori stiamo incorporando nei
               sistemi che costruiamo, e di farlo intenzionalmente invece che
               per inerzia.
             </p>
           </ArticleSection>
 
-          {/* ── LE QUATTRO AREE ───────────────────────────────────────── */}
+          {/* ── LE DUE AREE ───────────────────────────────────────────── */}
           <section>
             <p className="text-xs tracking-widest uppercase text-neutral-400 text-center mb-6 sm:mb-8">
-              Le aree principali
+              Approfondimenti
             </p>
             <CardGrid
               columns={2}
               cards={[
                 {
-                  title: "Bias e Discriminazione",
+                  title: "Bias, Giustizia e Responsabilità",
                   tag: "Equità",
                   description:
-                    "I modelli imparano dai dati storici. Se quei dati riflettono disuguaglianze passate, il modello le riproduce — e spesso le amplifica.",
-                  href: "/etica/bias-discriminazione",
+                    "I modelli imparano dai dati storici. Se quei dati riflettono disuguaglianze, il modello le riproduce. Ma chi è responsabile quando un algoritmo discrimina?",
+                  href: "/etica/bias-responsabilita",
                 },
                 {
-                  title: "Trasparenza e Spiegabilità",
-                  tag: "XAI",
+                  title: "Il Problema dell'Allineamento",
+                  tag: "Filosofia",
                   description:
-                    "Quando un modello nega un prestito o una diagnosi, ha l'obbligo di spiegare perché? E siamo in grado di capirlo?",
-                  href: "/etica/trasparenza",
-                },
-                {
-                  title: "Privacy e Dati",
-                  tag: "Diritti",
-                  description:
-                    "I modelli moderni sono addestrati su enormi quantità di dati personali. Chi possiede quei dati? Chi ha acconsentito al loro uso?",
-                  href: "/etica/privacy",
-                },
-                {
-                  title: "Governance e Regolamentazione",
-                  tag: "Politica",
-                  description:
-                    "Chi decide come si sviluppa l'AI? Governi, aziende, ricercatori o la società civile? E con quali strumenti?",
-                  href: "/etica/governance",
+                    "Come si costruisce un'AI che vuole davvero ciò che noi vogliamo? E siamo in grado di specificare, con precisione, cosa vogliamo?",
+                  href: "/etica/allineamento",
                 },
               ]}
             />
@@ -106,7 +91,7 @@ export default function EticaPage() {
               <strong> bias di rappresentazione</strong> si verifica quando
               certi gruppi sono sottorappresentati nei dati di training.
               Il <strong>bias di misurazione</strong> emerge quando le
-              variabili usate come proxy di un concetto (es. "merito") sono
+              variabili usate come proxy di un concetto (es. &quot;merito&quot;) sono
               esse stesse distorte. Il <strong>bias di aggregazione</strong>
               si produce quando un modello addestrato su una popolazione
               generalizza male su sottogruppi specifici.
@@ -148,7 +133,7 @@ export default function EticaPage() {
               {
                 term: "Feedback loop",
                 definition:
-                  "Quando le decisioni di un modello influenzano i dati futuri su cui verrà ri-addestrato, amplificando i bias iniziali. Es: polizia predittiva che pattugliera di più certi quartieri, aumentando gli arresti lì, confermando il modello.",
+                  "Quando le decisioni di un modello influenzano i dati futuri su cui verrà ri-addestrato, amplificando i bias iniziali. Es: polizia predittiva che pattuglia di più certi quartieri, aumentando gli arresti lì, confermando il modello.",
               },
             ]}
           />
@@ -163,13 +148,13 @@ export default function EticaPage() {
               Una rete neurale profonda con miliardi di parametri è, in senso
               tecnico, completamente deterministica: dati gli stessi input,
               produce sempre gli stessi output. Ma questo non significa che
-              sia <em>comprensibile</em>. Il percorso dall'input all'output
+              sia <em>comprensibile</em>. Il percorso dall&apos;input all&apos;output
               attraversa milioni di operazioni matriciali che non corrispondono
               a nessun ragionamento umano leggibile.
             </p>
             <p>
               Questo crea un problema legale e morale significativo. Il
-              GDPR europeo stabilisce un "diritto alla spiegazione" per le
+              GDPR europeo stabilisce un &quot;diritto alla spiegazione&quot; per le
               decisioni automatizzate che incidono su individui. Ma come si
               spiega una decisione presa da un transformer con 175 miliardi
               di parametri? Le tecniche di Explainable AI (XAI) — come LIME,
@@ -177,7 +162,7 @@ export default function EticaPage() {
               approssimazioni locali, ma non una vera comprensione causale.
             </p>
             <p>
-              C'è un trade-off reale tra performance e interpretabilità.
+              C&apos;è un trade-off reale tra performance e interpretabilità.
               I modelli più semplici e leggibili (alberi decisionali,
               regressione logistica) sono generalmente meno accurati di quelli
               profondi. Scegliere un modello meno performante perché è
@@ -242,12 +227,12 @@ export default function EticaPage() {
             subtitle="Delegare le decisioni alle macchine ha un costo che non compare in nessuna metrica."
           >
             <p>
-              C'è un effetto sottile e difficile da misurare che emerge
-              dall'uso prolungato di sistemi decisionali automatizzati:
-              l'erosione della capacità di giudizio autonomo.
+              C&apos;è un effetto sottile e difficile da misurare che emerge
+              dall&apos;uso prolungato di sistemi decisionali automatizzati:
+              l&apos;erosione della capacità di giudizio autonomo.
               Quando un sistema di navigazione GPS è sempre disponibile,
               le persone smettono di costruire mappe mentali delle città.
-              Quando un correttore automatico è sempre attivo, l'attenzione
+              Quando un correttore automatico è sempre attivo, l&apos;attenzione
               ortografica si atrofizza.
             </p>
             <p>
@@ -256,12 +241,12 @@ export default function EticaPage() {
               diagnosi AI perde gradualmente la capacità di ragionare
               clinicamente in assenza di supporto. Un analista finanziario
               che delega le previsioni a modelli statistici perde
-              progressivamente l'intuizione di mercato. Non perché siano
-              meno intelligenti — ma perché l'intelligenza, come i muscoli,
+              progressivamente l&apos;intuizione di mercato. Non perché siano
+              meno intelligenti — ma perché l&apos;intelligenza, come i muscoli,
               si atrofizza se non viene esercitata.
             </p>
             <p>
-              Questo non è un argomento contro l'AI. È un argomento per
+              Questo non è un argomento contro l&apos;AI. È un argomento per
               progettare sistemi AI che <strong>aumentino</strong> le capacità
               umane invece di sostituirle — e per essere consapevoli di quando
               stiamo attraversando quel confine.
@@ -275,20 +260,20 @@ export default function EticaPage() {
             subtitle="La risposta a questa domanda è una delle più importanti scelte politiche del nostro tempo."
           >
             <p>
-              Nel 2023 l'Unione Europea ha approvato l'AI Act, il primo
-              framework regolatorio completo sull'intelligenza artificiale.
+              Nel 2023 l&apos;Unione Europea ha approvato l&apos;AI Act, il primo
+              framework regolatorio completo sull&apos;intelligenza artificiale.
               Classifica i sistemi AI per livello di rischio — da
-              "inaccettabile" (manipolazione subliminale, social scoring) ad
-              "alto rischio" (infrastrutture critiche, selezione del personale,
-              giustizia) fino a "basso rischio" — e impone obblighi diversi
+              &quot;inaccettabile&quot; (manipolazione subliminale, social scoring) ad
+              &quot;alto rischio&quot; (infrastrutture critiche, selezione del personale,
+              giustizia) fino a &quot;basso rischio&quot; — e impone obblighi diversi
               per ciascuna categoria.
             </p>
             <p>
-              Negli Stati Uniti l'approccio è stato più frammentato:
+              Negli Stati Uniti l&apos;approccio è stato più frammentato:
               linee guida volontarie del NIST, executive order presidenziali,
               e una regolamentazione settoriale emergente. La Cina ha adottato
               un modello diverso ancora — regolamentazione stringente
-              sull'AI generativa e sui sistemi di raccomandazione,
+              sull&apos;AI generativa e sui sistemi di raccomandazione,
               con forti requisiti di sicurezza ideologica.
             </p>
             <p>
@@ -311,15 +296,15 @@ export default function EticaPage() {
               dei dati, nella definizione della funzione di loss, nel
               modo in cui viene deployato, in chi ha accesso ai suoi output
               e chi no. Queste scelte vengono fatte che ne siamo consapevoli
-              o meno. La differenza tra un'AI etica e una non etica non è
-              che una ha valori e l'altra no — è che una li ha scelti
-              intenzionalmente e l'altra li ha ereditati per inerzia.
+              o meno. La differenza tra un&apos;AI etica e una non etica non è
+              che una ha valori e l&apos;altra no — è che una li ha scelti
+              intenzionalmente e l&apos;altra li ha ereditati per inerzia.
             </p>
             <p>
-              Le sezioni successive approfondiscono ciascuno di questi temi
-              con più dettaglio: dai meccanismi tecnici del bias alla
-              filosofia del problema dell'allineamento, dai dilemmi pratici
-              della privacy ai possibili futuri della governance globale dell'AI.
+              Le sezioni successive approfondiscono due dei problemi più
+              importanti: il bias e la responsabilità morale delle decisioni
+              algoritmiche, e il problema filosofico dell&apos;allineamento —
+              come costruire sistemi che perseguano davvero i valori umani.
             </p>
           </ArticleSection>
 

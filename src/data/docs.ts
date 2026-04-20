@@ -1,4 +1,3 @@
-// src/data/docs.ts
 export type DocPage = {
   title: string;
   href: string;
@@ -24,10 +23,8 @@ export const docs: DocPage[] = [
     title: "Etica",
     href: "/etica",
     children: [
-      { title: "Dilemmi Etici", href: "/etica/dilemmi-etici" },
-      { title: "Atrofia del Pensiero", href: "/etica/atrofia-pensiero" },
-      { title: "Problemi Futuri", href: "/etica/problemi-futuri" },
-      { title: "Linee Guida", href: "/etica/linee-guida" },
+      { title: "Bias e Responsabilità", href: "/etica/bias-responsabilita" },
+      { title: "Il Problema dell'Allineamento", href: "/etica/allineamento" },
     ],
   },
 ];

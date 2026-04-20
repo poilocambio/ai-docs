@@ -6,15 +6,13 @@ export default function NeuralBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current!;
-    const ctx = canvas.getContext("2d")!;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
     const isMobile = window.innerWidth < 768;
 
-    // ============================================================
-    // -da chatGPT-
-    // Adaptive configuration: fewer nodes + smaller distances on mobile
-    // ============================================================
     const NODE_COUNT = isMobile ? 32 : 50;
     const CONNECT_DISTANCE = isMobile ? 110 : 120;
     const CONNECT_DISTANCE_SQ = CONNECT_DISTANCE * CONNECT_DISTANCE;
@@ -29,30 +27,19 @@ export default function NeuralBackground() {
     const FRAME_DELAY = 1000 / FPS;
     let lastFrameTime = 0;
 
-    // ============================================================
-    // -da chatGPT-
-    // Retina / HiDPI support
-    // ============================================================
     const dpr = window.devicePixelRatio || 1;
 
     function setupCanvas() {
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
+      canvas!.width = width * dpr;
+      canvas!.height = height * dpr;
+      canvas!.style.width = width + "px";
+      canvas!.style.height = height + "px";
+      ctx!.setTransform(1, 0, 0, 1, 0, 0);
+      ctx!.scale(dpr, dpr);
     }
 
-    // ============================================================
-    // -da chatGPT-
-    // Fix CLS: set canvas size immediately
-    // ============================================================
     setupCanvas();
 
-    // ============================================================
-    // Create nodes
-    // ============================================================
     const nodes = Array.from({ length: NODE_COUNT }).map(() => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -60,9 +47,6 @@ export default function NeuralBackground() {
       vy: (Math.random() - 0.5) * 0.4,
     }));
 
-    // ============================================================
-    // Mouse interaction (desktop only)
-    // ============================================================
     let mouse = { x: width / 2, y: height / 2 };
     const mouseMoveHandler = (e: MouseEvent) => {
       mouse.x = e.clientX;
@@ -70,9 +54,6 @@ export default function NeuralBackground() {
     };
     if (!isMobile) window.addEventListener("mousemove", mouseMoveHandler);
 
-    // ============================================================
-    // Detect areas to avoid (.avoid-canvas)
-    // ============================================================
     function getAvoidAreas() {
       const elements = document.querySelectorAll(".avoid-canvas");
       return Array.from(elements).map((el) => {
@@ -81,7 +62,7 @@ export default function NeuralBackground() {
       });
     }
     let avoidAreas = getAvoidAreas();
-    setTimeout(() => {
+    const avoidAreasTimer = setTimeout(() => {
       avoidAreas = getAvoidAreas();
     }, 300);
 
@@ -91,9 +72,6 @@ export default function NeuralBackground() {
       );
     }
 
-    // ============================================================
-    // Resize handling
-    // ============================================================
     const resizeHandler = () => {
       width = window.innerWidth;
       height = window.innerHeight;
@@ -102,9 +80,6 @@ export default function NeuralBackground() {
     };
     window.addEventListener("resize", resizeHandler);
 
-    // ============================================================
-    // Spatial grid optimization
-    // ============================================================
     const CELL_SIZE = CONNECT_DISTANCE;
     function buildSpatialGrid() {
       const grid = new Map<string, typeof nodes>();
@@ -118,13 +93,8 @@ export default function NeuralBackground() {
       return grid;
     }
 
-    // ============================================================
-    // Animation loop
-    // ============================================================
     let animationId: number;
 
-    // -da chatGPT-
-    // Delay start to reduce LCP impact
     function startAnimation() {
       function draw(timestamp = 0) {
         if (timestamp - lastFrameTime < FRAME_DELAY) {
@@ -133,9 +103,8 @@ export default function NeuralBackground() {
         }
         lastFrameTime = timestamp;
 
-        ctx.clearRect(0, 0, width, height);
+        ctx!.clearRect(0, 0, width, height);
 
-        // update nodes
         nodes.forEach((n) => {
           n.x += n.vx;
           n.y += n.vy;
@@ -147,15 +116,15 @@ export default function NeuralBackground() {
             n.x += n.vx * 2;
             n.y += n.vy * 2;
           }
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, NODE_SIZE, 0, Math.PI * 2);
-          ctx.fillStyle = "#999";
-          ctx.fill();
+          ctx!.beginPath();
+          ctx!.arc(n.x, n.y, NODE_SIZE, 0, Math.PI * 2);
+          ctx!.fillStyle = "#999";
+          ctx!.fill();
         });
 
-        // draw connections using spatial grid
+        // draw connections — only draw each pair once (A→B, skip B→A)
         const grid = buildSpatialGrid();
-        nodes.forEach((node) => {
+        nodes.forEach((node, nodeIdx) => {
           const cellX = Math.floor(node.x / CELL_SIZE);
           const cellY = Math.floor(node.y / CELL_SIZE);
           for (let x = -1; x <= 1; x++) {
@@ -164,35 +133,35 @@ export default function NeuralBackground() {
               const cell = grid.get(key);
               if (!cell) continue;
               cell.forEach((other) => {
-                if (node === other) return;
+                const otherIdx = nodes.indexOf(other);
+                if (otherIdx <= nodeIdx) return;
                 const dx = node.x - other.x;
                 const dy = node.y - other.y;
                 const distSq = dx * dx + dy * dy;
                 if (distSq < CONNECT_DISTANCE_SQ) {
-                  ctx.beginPath();
-                  ctx.moveTo(node.x, node.y);
-                  ctx.lineTo(other.x, other.y);
+                  ctx!.beginPath();
+                  ctx!.moveTo(node.x, node.y);
+                  ctx!.lineTo(other.x, other.y);
                   const dist = Math.sqrt(distSq);
-                  ctx.strokeStyle = `rgba(150,150,150,${(1 - dist / CONNECT_DISTANCE) * LINE_OPACITY_MULTIPLIER})`;
-                  ctx.stroke();
+                  ctx!.strokeStyle = `rgba(150,150,150,${(1 - dist / CONNECT_DISTANCE) * LINE_OPACITY_MULTIPLIER})`;
+                  ctx!.stroke();
                 }
               });
             }
           }
         });
 
-        // mouse interaction
         if (!isMobile && MOUSE_DISTANCE > 0) {
           const mouseDistSq = MOUSE_DISTANCE * MOUSE_DISTANCE;
           nodes.forEach((n) => {
             const dx = n.x - mouse.x;
             const dy = n.y - mouse.y;
             if (dx * dx + dy * dy < mouseDistSq) {
-              ctx.beginPath();
-              ctx.moveTo(n.x, n.y);
-              ctx.lineTo(mouse.x, mouse.y);
-              ctx.strokeStyle = "rgba(120,120,120,0.2)";
-              ctx.stroke();
+              ctx!.beginPath();
+              ctx!.moveTo(n.x, n.y);
+              ctx!.lineTo(mouse.x, mouse.y);
+              ctx!.strokeStyle = "rgba(120,120,120,0.2)";
+              ctx!.stroke();
             }
           });
         }
@@ -203,19 +172,15 @@ export default function NeuralBackground() {
       draw();
     }
 
-    // -da chatGPT-
-    // Start animation after window load to reduce LCP impact
     if (document.readyState === "complete") {
       startAnimation();
     } else {
       window.addEventListener("load", startAnimation);
     }
 
-    // ============================================================
-    // Cleanup React
-    // ============================================================
     return () => {
       cancelAnimationFrame(animationId);
+      clearTimeout(avoidAreasTimer);
       window.removeEventListener("resize", resizeHandler);
       window.removeEventListener("mousemove", mouseMoveHandler);
       window.removeEventListener("load", startAnimation);
