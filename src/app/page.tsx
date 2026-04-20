@@ -94,7 +94,11 @@ export default function HomePage() {
         </section>
 
         {/* ── DOMANDA FINALE ────────────────────────────────────────── */}
-        <section className="max-w-xl mx-auto text-center border-t border-neutral-100 pt-12 sm:pt-16">
+        <section className="relative max-w-xl mx-auto text-center pt-12 sm:pt-16">
+          {/* griglia decorativa + angoli crosshair */}
+          <div className="absolute inset-x-0 top-0 h-px bg-neutral-100" aria-hidden="true" />
+          <span className="absolute top-0 left-0 -translate-y-1/2 w-3 h-3 border-t border-l border-neutral-300" aria-hidden="true" />
+          <span className="absolute top-0 right-0 -translate-y-1/2 w-3 h-3 border-t border-r border-neutral-300" aria-hidden="true" />
           <p className="text-xs tracking-widest uppercase text-neutral-400 mb-4">
             Una domanda aperta
           </p>

@@ -54,6 +54,14 @@ export default function Hero() {
         </div>
       </div>
 
+      {/* Angoli crosshair sopra la griglia */}
+      <div className="absolute inset-4 pointer-events-none" aria-hidden="true">
+        <span className="absolute top-0 left-0 w-4 h-4 border-t border-l border-neutral-300/60" />
+        <span className="absolute top-0 right-0 w-4 h-4 border-t border-r border-neutral-300/60" />
+        <span className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-neutral-300/60" />
+        <span className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-neutral-300/60" />
+      </div>
+
       {/* Scroll indicator */}
       <div
         className="relative flex flex-col items-center pb-8 sm:pb-10 text-neutral-400"
