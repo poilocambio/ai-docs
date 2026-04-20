@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import ArticleSection from "@/components/ArticleSection";
 import DefinitionBlock from "@/components/DefinitionBlock";
@@ -13,6 +13,7 @@ export default function RetiNeurali() {
   const [animDone, setAnimDone]     = useState(false);
   const [showContent, setShowContent] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleAnimComplete = useCallback(() => {
     setAnimDone(true);
@@ -20,20 +21,25 @@ export default function RetiNeurali() {
 
   const handleContinue = useCallback(() => {
     setShowContent(true);
-    setTimeout(() => {
+    if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    scrollTimerRef.current = setTimeout(() => {
       contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 80);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    };
+  }, []);
+
   return (
-    <main className="bg-white">
+    <div>
 
       {/* ── INTRO: occupa tutto lo spazio disponibile sotto l'header ── */}
-      {/* Usa flex + min-h invece di h fissa: si adatta all'header di qualsiasi altezza */}
       <section
         className="relative w-full overflow-hidden"
-        // 100dvh - altezza header (var CSS definita nel layout)
-        style={{ height: "calc(100dvh - var(--header-height, 57px))" }}
+        style={{ height: "calc(100dvh - var(--header-height, 64px))" }}
         aria-label="Animazione introduttiva rete neurale"
       >
         <NeuralFormation onComplete={handleAnimComplete} />
@@ -93,10 +99,10 @@ export default function RetiNeurali() {
               da unità elementari — i <strong>neuroni artificiali</strong> —
               organizzate in strati e collegate da pesi numerici.
               Ogni connessione ha un valore che determina quanto un segnale
-              viene amplificato o attenuato nel passaggio da un nodo all'altro.
+              viene amplificato o attenuato nel passaggio da un nodo all&apos;altro.
             </p>
             <p>
-              L'analogia con il cervello biologico è utile come metafora
+              L&apos;analogia con il cervello biologico è utile come metafora
               introduttiva, ma va presa con cautela: le reti neurali artificiali
               non replicano il funzionamento neuronale reale, sono modelli
               matematici che si ispirano vagamente alla sua struttura.
@@ -146,17 +152,17 @@ export default function RetiNeurali() {
               I neuroni sono organizzati in <strong>layer sequenziali</strong>.
               Il primo layer riceve i dati grezzi: pixel, numeri, token.
               Gli hidden layer li trasformano in rappresentazioni sempre più
-              astratte. L'output layer produce la risposta finale: una classe,
+              astratte. L&apos;output layer produce la risposta finale: una classe,
               un numero, una distribuzione di probabilità.
             </p>
             <p>
-              L'animazione nell'intro mostra esattamente questa struttura:
+              L&apos;animazione nell&apos;intro mostra esattamente questa struttura:
               punti casuali che convergono in layer ordinati, connessi tra loro.
               Ogni colonna è un layer, ogni linea una connessione pesata.
             </p>
             <p>
               La profondità — il numero di hidden layer — è ciò che distingue
-              le reti "deep" da quelle superficiali. Reti più profonde
+              le reti &quot;deep&quot; da quelle superficiali. Reti più profonde
               apprendono pattern più complessi, ma richiedono più dati,
               più computazione e tecniche di training più sofisticate.
             </p>
@@ -171,13 +177,13 @@ export default function RetiNeurali() {
               Una rete non nasce con i pesi giusti: li <em>impara</em>.
               Il training consiste nel mostrare migliaia di esempi alla rete,
               misurare quanto sbaglia con una funzione di loss, e aggiornare
-              i pesi nella direzione che riduce l'errore. Questo processo
+              i pesi nella direzione che riduce l&apos;errore. Questo processo
               si chiama <strong>backpropagation</strong> ed è il cuore
               del Deep Learning moderno.
             </p>
           </ArticleSection>
         </div>
       )}
-    </main>
+    </div>
   );
 }
