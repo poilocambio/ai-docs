@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import DefaultPage from "@/components/DefaultPage";
 import ArticleSection from "@/components/ArticleSection";
 import CardGrid from "@/components/CardGrid";
-import DefinitionBlock from "@/components/DefinitionBlock";
-import CompareTable from "@/components/CompareTable";
 
 export const metadata: Metadata = {
   title: "Etica dell'IA",
   description:
-    "Bias algoritmico, trasparenza, privacy, impatto sul lavoro e governance: i dilemmi etici dell'intelligenza artificiale.",
+    "Bias algoritmico, responsabilità, impatto cognitivo e governance: i dilemmi etici dell'intelligenza artificiale.",
 };
 
 export default function EticaPage() {
@@ -87,14 +85,13 @@ export default function EticaPage() {
               aveva programmato questa discriminazione: era emersa dai dati.
             </p>
             <p>
-              Il bias algoritmico può manifestarsi in modi diversi. Il
-              <strong> bias di rappresentazione</strong> si verifica quando
-              certi gruppi sono sottorappresentati nei dati di training.
-              Il <strong>bias di misurazione</strong> emerge quando le
-              variabili usate come proxy di un concetto (es. &quot;merito&quot;) sono
-              esse stesse distorte. Il <strong>bias di aggregazione</strong>
-              si produce quando un modello addestrato su una popolazione
-              generalizza male su sottogruppi specifici.
+              Il bias algoritmico può manifestarsi in modi diversi. A volte
+              certi gruppi sono sottorappresentati nei dati di training. A volte
+              le variabili usate come proxy di un concetto — come il
+              &quot;merito&quot; — sono esse stesse già distorte. A volte un modello
+              addestrato su una popolazione generalizza male su sottogruppi
+              specifici. Il risultato è sempre lo stesso: il sistema amplifica
+              disuguaglianze invece di ridurle.
             </p>
             <p>
               La difficoltà è che spesso questi bias non sono visibili prima
@@ -104,121 +101,6 @@ export default function EticaPage() {
               causato danni concreti a persone reali.
             </p>
           </ArticleSection>
-
-          <DefinitionBlock
-            title="Tipi di bias"
-            definitions={[
-              {
-                term: "Bias storico",
-                definition:
-                  "Discriminazioni preesistenti nella società che vengono incorporate nei dati di training e quindi nei modelli. È il tipo più difficile da rimuovere perché riflette strutture sociali reali.",
-              },
-              {
-                term: "Bias di selezione",
-                definition:
-                  "I dati raccolti non sono rappresentativi della popolazione reale. Es: dataset di immagini facciali composti prevalentemente da soggetti caucasici maschi.",
-                also: "sampling bias",
-              },
-              {
-                term: "Bias di conferma",
-                definition:
-                  "Il modello viene valutato su metriche che non catturano le disparità tra gruppi. Un'accuratezza globale del 95% può nascondere un'accuratezza del 60% su una minoranza.",
-              },
-              {
-                term: "Bias di automazione",
-                definition:
-                  "La tendenza degli esseri umani a fidarsi eccessivamente delle decisioni automatizzate, anche quando sbagliate. Un giudice che segue acriticamente una raccomandazione algoritmica.",
-                also: "automation bias",
-              },
-              {
-                term: "Feedback loop",
-                definition:
-                  "Quando le decisioni di un modello influenzano i dati futuri su cui verrà ri-addestrato, amplificando i bias iniziali. Es: polizia predittiva che pattuglia di più certi quartieri, aumentando gli arresti lì, confermando il modello.",
-              },
-            ]}
-          />
-
-          {/* ── TRASPARENZA ───────────────────────────────────────────── */}
-          <ArticleSection
-            tag="XAI"
-            title="La black box e il problema della spiegabilità"
-            subtitle="Possiamo fidarci di un sistema che non sappiamo spiegare?"
-          >
-            <p>
-              Una rete neurale profonda con miliardi di parametri è, in senso
-              tecnico, completamente deterministica: dati gli stessi input,
-              produce sempre gli stessi output. Ma questo non significa che
-              sia <em>comprensibile</em>. Il percorso dall&apos;input all&apos;output
-              attraversa milioni di operazioni matriciali che non corrispondono
-              a nessun ragionamento umano leggibile.
-            </p>
-            <p>
-              Questo crea un problema legale e morale significativo. Il
-              GDPR europeo stabilisce un &quot;diritto alla spiegazione&quot; per le
-              decisioni automatizzate che incidono su individui. Ma come si
-              spiega una decisione presa da un transformer con 175 miliardi
-              di parametri? Le tecniche di Explainable AI (XAI) — come LIME,
-              SHAP e i metodi di attention visualization — offrono
-              approssimazioni locali, ma non una vera comprensione causale.
-            </p>
-            <p>
-              C&apos;è un trade-off reale tra performance e interpretabilità.
-              I modelli più semplici e leggibili (alberi decisionali,
-              regressione logistica) sono generalmente meno accurati di quelli
-              profondi. Scegliere un modello meno performante perché è
-              spiegabile è una decisione etica — e spesso quella giusta,
-              soprattutto in contesti ad alto rischio come medicina e giustizia.
-            </p>
-          </ArticleSection>
-
-          {/* ── CONFRONTO CONTESTI ────────────────────────────────────── */}
-          <CompareTable
-            title="Requisiti etici per contesto"
-            caption="La priorità delle proprietà etiche cambia radicalmente in base al dominio applicativo."
-            columns={["Medicina", "Giustizia penale", "Raccomandazione contenuti"]}
-            rows={[
-              {
-                aspect: "Priorità principale",
-                values: [
-                  "Accuratezza e sicurezza",
-                  "Equità e non discriminazione",
-                  "Trasparenza verso l'utente",
-                ],
-              },
-              {
-                aspect: "Spiegabilità",
-                values: [
-                  "Critica — il medico deve capire il suggerimento",
-                  "Obbligatoria — diritto alla difesa",
-                  "Desiderabile ma non critica",
-                ],
-              },
-              {
-                aspect: "Errore peggiore",
-                values: [
-                  "Falso negativo (mancata diagnosi)",
-                  "Falso positivo (condanna ingiusta)",
-                  "Filter bubble e radicalizzazione",
-                ],
-              },
-              {
-                aspect: "Regolamentazione",
-                values: [
-                  "Molto alta (FDA, CE marking)",
-                  "In sviluppo (EU AI Act)",
-                  "Bassa — principalmente autoregolamentazione",
-                ],
-              },
-              {
-                aspect: "Chi decide in ultima istanza",
-                values: [
-                  "Il medico",
-                  "Il giudice",
-                  "L'algoritmo (spesso senza override umano)",
-                ],
-              },
-            ]}
-          />
 
           {/* ── ATROFIA E DIPENDENZA ──────────────────────────────────── */}
           <ArticleSection
@@ -283,28 +165,6 @@ export default function EticaPage() {
               che causano danni reali prima che qualcuno intervenga. Non esiste
               una risposta tecnica a questo dilemma — è una scelta di valori,
               e come tale appartiene alla politica, non agli ingegneri.
-            </p>
-          </ArticleSection>
-
-          {/* ── NOTA FINALE ───────────────────────────────────────────── */}
-          <ArticleSection
-            tag="Conclusione"
-            title="L'etica non è opzionale"
-          >
-            <p>
-              Ogni sistema AI incorpora scelte di valore: nella selezione
-              dei dati, nella definizione della funzione di loss, nel
-              modo in cui viene deployato, in chi ha accesso ai suoi output
-              e chi no. Queste scelte vengono fatte che ne siamo consapevoli
-              o meno. La differenza tra un&apos;AI etica e una non etica non è
-              che una ha valori e l&apos;altra no — è che una li ha scelti
-              intenzionalmente e l&apos;altra li ha ereditati per inerzia.
-            </p>
-            <p>
-              Le sezioni successive approfondiscono due dei problemi più
-              importanti: il bias e la responsabilità morale delle decisioni
-              algoritmiche, e il problema filosofico dell&apos;allineamento —
-              come costruire sistemi che perseguano davvero i valori umani.
             </p>
           </ArticleSection>
 
