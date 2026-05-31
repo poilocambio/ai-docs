@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: {
     default: "Intelligenza Artificiale: Analisi Tecnica ed Etica",
-    template: "%s \\ AI Docs",
+    template: "%s \\ AI-docs",
   },
   description:
     "Studio approfondito dell'intelligenza artificiale: architetture, LLM, reti neurali, bias, impatti etici e regolamentazione.",

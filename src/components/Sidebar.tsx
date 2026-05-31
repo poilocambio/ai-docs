@@ -70,7 +70,7 @@ const Sidebar = () => {
       >
         {sidebarOpen && (
           <span className="flex-1 pl-3 text-sm font-semibold tracking-tight text-black whitespace-nowrap overflow-hidden">
-            AI Docs
+            AI-docs
           </span>
         )}
 

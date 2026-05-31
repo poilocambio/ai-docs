@@ -78,7 +78,7 @@ const Header = () => {
           href="/"
           className="text-sm font-semibold tracking-tight text-black hover:text-neutral-500 transition-colors shrink-0"
         >
-          AI Docs
+          AI-docs
         </Link>
 
         {/* ── Nav desktop ──────────────────────────────────────────── */}
