@@ -13,34 +13,34 @@ type DefinitionBlockProps = {
 
 export default function DefinitionBlock({ definitions, title }: DefinitionBlockProps) {
   return (
-    <div className="block-glass rounded-xl border border-neutral-200/50 overflow-hidden">
+    <div className="block-glass rounded-xl border border-line/60 overflow-hidden">
 
       {title && (
-        <div className="block-glass-header px-4 sm:px-5 py-3 border-b border-neutral-200/40">
-          <span className="text-xs tracking-widest uppercase text-neutral-400 font-medium">
+        <div className="block-glass-header px-4 sm:px-5 py-3 border-b border-line/50">
+          <span className="text-xs tracking-widest uppercase text-ink-faint font-medium">
             {title}
           </span>
         </div>
       )}
 
-      <dl className="divide-y divide-neutral-100/60">
+      <dl className="divide-y divide-line/50">
         {definitions.map((def, i) => (
           <div
             key={i}
             className="block-glass-row flex flex-col sm:flex-row sm:gap-8 px-4 sm:px-5 py-4 transition-colors duration-150"
           >
             <dt className="sm:w-44 shrink-0 mb-1.5 sm:mb-0">
-              <span className="font-mono text-sm font-semibold text-black">
+              <span className="font-mono text-sm font-semibold text-ink">
                 {def.term}
               </span>
               {def.also && (
-                <p className="text-xs text-neutral-400 mt-0.5 font-sans">
+                <p className="text-xs text-ink-faint mt-0.5 font-sans">
                   alias: {def.also}
                 </p>
               )}
             </dt>
 
-            <dd className="text-sm text-neutral-600 leading-relaxed flex-1 m-0">
+            <dd className="text-sm text-ink-soft leading-relaxed flex-1 m-0">
               {def.definition}
             </dd>
           </div>

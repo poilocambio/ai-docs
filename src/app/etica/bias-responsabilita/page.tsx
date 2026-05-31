@@ -3,15 +3,17 @@ import DefaultPage from "@/components/DefaultPage";
 import ArticleSection from "@/components/ArticleSection";
 
 export const metadata: Metadata = {
-  title: "Bias, Giustizia e Responsabilità",
+  title: "Bias e Responsabilità: l'equità degli algoritmi",
   description:
     "Quando un algoritmo discrimina, chi è responsabile? Dal bias tecnico alla responsabilità morale nelle decisioni automatizzate.",
 };
 
 export default function BiasResponsabilitaPage() {
   return (
+    // Hero opzionale: salva /img/pages/bias.jpg (prompt Canva AI in chat)
     <DefaultPage
-      title="Bias, Giustizia e Responsabilità"
+      title="Bias e Responsabilità: l'equità degli algoritmi"
+      image="/img/pages/bias.jpg"
       content={
         <div className="space-y-20">
 

@@ -7,15 +7,17 @@ import CardGrid from "@/components/CardGrid";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Machine Learning",
+  title: "Machine Learning: imparare dai dati",
   description:
     "Cos'è il machine learning, come funziona, i tre paradigmi di apprendimento e gli algoritmi principali.",
 };
 
 export default function MachineLearning() {
   return (
+    // Hero opzionale: salva /img/pages/machine-learning.jpg (prompt Canva AI in chat)
     <DefaultPage
-      title="Machine Learning"
+      title="Machine Learning: imparare dai dati"
+      image="/img/pages/machine-learning.jpg"
       content={
         <div className="space-y-20">
 

@@ -1,70 +1,61 @@
 import React from "react";
-import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[100svh] flex flex-col justify-between overflow-hidden bg-transparent">
+    <section
+      className="relative min-h-[100svh] flex flex-col justify-between overflow-hidden text-on-dark"
+      style={{ marginTop: "calc(var(--header-height) * -1)" }}
+    >
 
-      {/* Grid decorativa — unica, gestita qui */}
-      <div className="absolute inset-0 opacity-25 pointer-events-none" aria-hidden="true">
-        <div className="w-full h-full bg-[linear-gradient(to_right,#d4d4d4_1px,transparent_1px),linear-gradient(to_bottom,#d4d4d4_1px,transparent_1px)] bg-[size:32px_32px] sm:bg-[size:40px_40px]" />
+      {/* Sfondo scuro dedicato dell'hero — copre il canvas globale chiaro.
+          Primo figlio assoluto: resta dietro a tutto il resto della sezione. */}
+      <div className="absolute inset-0 bg-night" aria-hidden="true">
+        {/* Immagine di sfondo opzionale — basta inserire public/img/hero.jpg.
+            Se il file non esiste resta il colore bg-night (nessun errore in console). */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/img/hero.jpg')" }}
+        />
+        {/* Velo scuro sopra l'immagine per garantire la leggibilità del testo */}
+        <div className="absolute inset-0 bg-night/60" />
+
+        {/* Glow morbidi e ampi — niente griglia netta, atmosfera diffusa */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(70% 60% at 50% 0%, rgba(62,125,78,0.28), transparent 62%)," +
+              "radial-gradient(55% 50% at 88% 28%, rgba(197,139,153,0.16), transparent 60%)," +
+              "radial-gradient(90% 70% at 50% 118%, rgba(239,230,196,0.14), transparent 58%)",
+          }}
+        />
+        {/* Blob sfocati per dare profondità allo sfondo */}
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[80vw] h-[55vh] rounded-full bg-grass/20 blur-[120px]" />
+        <div className="absolute bottom-[-12%] right-[-6%] w-[48vw] h-[45vh] rounded-full bg-mauve/15 blur-[110px]" />
       </div>
 
       {/* Contenuto principale — centrato verticalmente */}
-      <div className="relative flex-1 flex items-center justify-center px-5 sm:px-6 py-20 sm:py-28">
-        <div className="w-full max-w-3xl mx-auto text-center">
+      <div className="relative flex-1 flex items-center justify-center px-5 sm:px-6 pt-28 pb-20 sm:pt-32 sm:pb-28">
+        <div className="w-full max-w-5xl mx-auto text-center">
 
-          {/* Badge */}
-          <div className="mb-5 sm:mb-6 flex justify-center">
-            <span className="text-xs tracking-widest uppercase text-neutral-400 border border-neutral-200 px-3 py-1 rounded-full">
-              Artificial Intelligence
-            </span>
-          </div>
-
-          {/* Titolo — scala progressivamente */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-black leading-tight">
-            Capire l'Intelligenza
-            <br className="hidden sm:block" />
-            <span className="text-neutral-500"> Artificiale</span>
+          {/* Titolo — display monumentale */}
+          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-light tracking-tight text-on-dark leading-[0.95]">
+            Capire l&apos;
+            <span className="text-cream">Intelligenza Artificiale</span>
           </h1>
 
-          {/* Sottotitolo */}
-          <p className="mt-5 sm:mt-6 text-base sm:text-lg leading-relaxed text-neutral-500 max-w-xl mx-auto">
-            Un'esplorazione dell'AI tra tecnologia, filosofia ed etica —
-            dai modelli di machine learning alle domande più profonde
-            sul pensiero artificiale.
+          {/* Sottotitolo — una riga essenziale */}
+          <p className="mt-7 sm:mt-9 text-base sm:text-xl leading-relaxed text-on-dark/70 max-w-2xl mx-auto">
+            Tra tecnologia, filosofia ed etica: come funziona, cosa può fare
+            e cosa significa per noi.
           </p>
-
-          {/* CTA */}
-          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-            <Link
-              href="/fondamenti"
-              className="rounded-md bg-black px-6 py-3 text-sm font-medium text-white hover:bg-neutral-800 active:bg-neutral-900 transition-colors"
-            >
-              Esplora i Fondamenti
-            </Link>
-            <Link
-              href="/etica"
-              className="rounded-md border border-neutral-300 px-6 py-3 text-sm font-medium text-black hover:bg-neutral-100 active:bg-neutral-200 transition-colors"
-            >
-              Scopri l'Etica
-            </Link>
-          </div>
 
         </div>
       </div>
 
-      {/* Angoli crosshair sopra la griglia */}
-      <div className="absolute inset-4 pointer-events-none" aria-hidden="true">
-        <span className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-neutral-400/70" />
-        <span className="absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2 border-neutral-400/70" />
-        <span className="absolute bottom-0 left-0 w-5 h-5 border-b-2 border-l-2 border-neutral-400/70" />
-        <span className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 border-neutral-400/70" />
-      </div>
-
       {/* Scroll indicator */}
       <div
-        className="relative flex flex-col items-center pb-8 sm:pb-10 text-neutral-400"
+        className="relative flex flex-col items-center pb-8 sm:pb-10 text-on-dark/50"
         aria-hidden="true"
       >
         <span className="text-xs tracking-wider mb-2 uppercase">Scroll</span>

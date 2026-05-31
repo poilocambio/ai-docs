@@ -118,7 +118,7 @@ export default function NeuralBackground() {
           }
           ctx!.beginPath();
           ctx!.arc(n.x, n.y, NODE_SIZE, 0, Math.PI * 2);
-          ctx!.fillStyle = "#999";
+          ctx!.fillStyle = "rgba(108,124,110,0.6)";
           ctx!.fill();
         });
 
@@ -143,7 +143,7 @@ export default function NeuralBackground() {
                   ctx!.moveTo(node.x, node.y);
                   ctx!.lineTo(other.x, other.y);
                   const dist = Math.sqrt(distSq);
-                  ctx!.strokeStyle = `rgba(150,150,150,${(1 - dist / CONNECT_DISTANCE) * LINE_OPACITY_MULTIPLIER})`;
+                  ctx!.strokeStyle = `rgba(120,134,122,${(1 - dist / CONNECT_DISTANCE) * LINE_OPACITY_MULTIPLIER})`;
                   ctx!.stroke();
                 }
               });
@@ -160,7 +160,7 @@ export default function NeuralBackground() {
               ctx!.beginPath();
               ctx!.moveTo(n.x, n.y);
               ctx!.lineTo(mouse.x, mouse.y);
-              ctx!.strokeStyle = "rgba(120,120,120,0.2)";
+              ctx!.strokeStyle = "rgba(108,124,110,0.2)";
               ctx!.stroke();
             }
           });

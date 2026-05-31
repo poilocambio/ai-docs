@@ -1,44 +1,85 @@
 @import "tailwindcss";
 
-/* ── Glass effect — usato da CardGrid, DefinitionBlock, CompareTable, CodeBlock ── */
-/* Inline style per background+blur, CSS per hover — evita event handlers nei Server Components */
+/* ──────────────────────────────────────────────────────────────
+   Design tokens — palette "Cortical Labs" (light/dark mista)
+   Tailwind v4 genera utility da questi token: bg-surface, text-ink,
+   text-cream, bg-grass, bg-mauve, border-line, ecc.
+   ────────────────────────────────────────────────────────────── */
+@theme {
+  /* Tipografia — --font-display è iniettata da next/font in layout.tsx */
+  --font-sans: var(--font-display), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
 
+  /* Superfici scure (corpo del sito — tema dark) */
+  --color-surface: #121517;
+  --color-surface-raised: #1b1f22;
+  --color-surface-sunken: #2a2f33;   /* in dark è il "rialzo": hover/active più chiari della superficie */
+  --color-line: #353c41;
+
+  /* Inchiostro — testo chiaro su superfici scure */
+  --color-ink: #f4f3ef;
+  --color-ink-soft: #aeb2b5;
+  --color-ink-faint: #868c90;
+
+  /* Scuro — hero e pannelli notturni */
+  --color-night: #2c3033;
+  --color-night-2: #3c4247;
+  --color-on-dark: #f4f3ef;
+  --color-banner: #0a0a0a;
+
+  /* Accenti firma */
+  --color-cream: #efe6c4;
+  --color-grass: #3e7d4e;
+  --color-mauve: #c58b99;
+}
+
+:root {
+  --header-height: 84px;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Glass effect — usato da CardGrid, DefinitionBlock, CompareTable,
+   CodeBlock e dal pill di navigazione.
+   Background+blur via CSS (niente event handler nei Server Components);
+   tonalità calibrate sulla superficie chiara così il canvas neurale
+   traspare leggermente sotto.
+   ────────────────────────────────────────────────────────────── */
 .card-glass {
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(27, 31, 34, 0.5);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 .card-glass:hover {
-  background: rgba(255, 255, 255, 0.48);
+  background: rgba(27, 31, 34, 0.72);
 }
 
 .block-glass {
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(27, 31, 34, 0.5);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
 .block-glass-header {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(27, 31, 34, 0.4);
 }
 
 .block-glass-pre {
-  background: rgba(255, 255, 255, 0.38);
+  background: rgba(15, 18, 20, 0.6);
 }
 
 .block-glass-caption {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(27, 31, 34, 0.3);
 }
 
 .block-glass-row:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(42, 47, 51, 0.5);
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --header-height: 64px;
-  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+/* Pill di navigazione — frost chiaro traslucido sopra il tema scuro */
+.nav-glass {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 @keyframes bounce-scroll {
@@ -53,7 +94,57 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-surface);
+  color: var(--color-ink);
   font-family: var(--font-sans);
 }
+
+/* ──────────────────────────────────────────────────────────────
+   Tema CHIARO opzionale — attivo con <html data-theme="light">.
+   Ridefinisce i token (e le glass) ai valori chiari: tutto il sito
+   commuta senza modifiche ai componenti. Il default resta scuro.
+   ────────────────────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  --color-surface: #e8e7e3;
+  --color-surface-raised: #f2f1ed;
+  --color-surface-sunken: #dcdad3;
+  --color-line: #cccac3;
+  --color-ink: #161616;
+  --color-ink-soft: #555550;
+  --color-ink-faint: #8c8c86;
+}
+[data-theme="light"] .card-glass { background: rgba(242, 241, 237, 0.5); }
+[data-theme="light"] .card-glass:hover { background: rgba(242, 241, 237, 0.74); }
+[data-theme="light"] .block-glass { background: rgba(242, 241, 237, 0.5); }
+[data-theme="light"] .block-glass-header { background: rgba(242, 241, 237, 0.34); }
+[data-theme="light"] .block-glass-pre { background: rgba(248, 247, 244, 0.6); }
+[data-theme="light"] .block-glass-caption { background: rgba(236, 235, 231, 0.28); }
+[data-theme="light"] .block-glass-row:hover { background: rgba(220, 218, 211, 0.45); }
+[data-theme="light"] .nav-glass { background: rgba(244, 243, 239, 0.5); }
+/* toggle tema: ridefinizione token attiva */
+
+/* ──────────────────────────────────────────────────────────────
+   Syntax highlighting (highlight.js) — tema DOPPIO, sfondo trasparente
+   così traspare il .block-glass-pre. Default scuro (stile github-dark),
+   override chiaro sotto [data-theme="light"] (stile github-light).
+   ────────────────────────────────────────────────────────────── */
+.hljs { color: #e6edf3; background: transparent; }
+.hljs-comment, .hljs-quote { color: #8b949e; font-style: italic; }
+.hljs-keyword, .hljs-selector-tag, .hljs-type, .hljs-literal, .hljs-section, .hljs-name, .hljs-doctag { color: #ff7b72; }
+.hljs-string, .hljs-meta .hljs-string, .hljs-regexp, .hljs-addition { color: #a5d6ff; }
+.hljs-number, .hljs-symbol, .hljs-bullet, .hljs-link { color: #79c0ff; }
+.hljs-title, .hljs-title.function_, .hljs-title.class_, .hljs-selector-id, .hljs-selector-class { color: #d2a8ff; }
+.hljs-built_in, .hljs-attr, .hljs-attribute, .hljs-variable, .hljs-template-variable, .hljs-params { color: #ffa657; }
+.hljs-meta { color: #8b949e; }
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: 600; }
+
+[data-theme="light"] .hljs { color: #24292e; }
+[data-theme="light"] .hljs-comment, [data-theme="light"] .hljs-quote { color: #6a737d; }
+[data-theme="light"] .hljs-keyword, [data-theme="light"] .hljs-selector-tag, [data-theme="light"] .hljs-type, [data-theme="light"] .hljs-literal, [data-theme="light"] .hljs-section, [data-theme="light"] .hljs-name, [data-theme="light"] .hljs-doctag { color: #cf222e; }
+[data-theme="light"] .hljs-string, [data-theme="light"] .hljs-meta .hljs-string, [data-theme="light"] .hljs-regexp, [data-theme="light"] .hljs-addition { color: #0a3069; }
+[data-theme="light"] .hljs-number, [data-theme="light"] .hljs-symbol, [data-theme="light"] .hljs-bullet, [data-theme="light"] .hljs-link { color: #0550ae; }
+[data-theme="light"] .hljs-title, [data-theme="light"] .hljs-title.function_, [data-theme="light"] .hljs-title.class_, [data-theme="light"] .hljs-selector-id, [data-theme="light"] .hljs-selector-class { color: #6639ba; }
+[data-theme="light"] .hljs-built_in, [data-theme="light"] .hljs-attr, [data-theme="light"] .hljs-attribute, [data-theme="light"] .hljs-variable, [data-theme="light"] .hljs-template-variable, [data-theme="light"] .hljs-params { color: #953800; }
+[data-theme="light"] .hljs-meta { color: #6a737d; }
+/* hljs dual-theme attivo */

@@ -30,6 +30,16 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
     if (!ctx) return;
     const dpr = window.devicePixelRatio || 1;
 
+    // Colori adattivi al tema. Dark: nodi chiari + connessioni verdi tenui.
+    // Light: nodi scuri ma morbidi (night, non nero pieno) + connessioni verdi più marcate.
+    const rootCS = getComputedStyle(document.documentElement);
+    const isLight = document.documentElement.getAttribute("data-theme") === "light";
+    const nodeColor = isLight
+      ? (rootCS.getPropertyValue("--color-night").trim() || "#2c3033")
+      : (rootCS.getPropertyValue("--color-on-dark").trim() || "#f4f3ef");
+    const labelColor = rootCS.getPropertyValue("--color-ink-soft").trim() || "#aeb2b5";
+    const connAlphaMul = isLight ? 0.5 : 0.3;
+
     function getSize() {
       const parent = canvas!.parentElement;
       if (!parent) return { W: window.innerWidth, H: window.innerHeight };
@@ -164,7 +174,7 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
               ctx!.beginPath();
               ctx!.moveTo(a.x, a.y);
               ctx!.lineTo(b.x, b.y);
-              ctx!.strokeStyle = `rgba(160,160,160,${connAlpha * 0.28})`;
+              ctx!.strokeStyle = `rgba(62,125,78,${connAlpha * connAlphaMul})`;
               ctx!.stroke();
             }
           }
@@ -182,14 +192,16 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
       pos.forEach(p => {
         ctx!.beginPath();
         ctx!.arc(p.x, p.y, currentNodeSize, 0, Math.PI * 2);
-        ctx!.fillStyle = "#1a1a1a";
+        ctx!.fillStyle = nodeColor;
         ctx!.fill();
       });
 
       // Etichette
       const lblAlpha = phase === "done" ? Math.min(1, elapsed / LABEL_DURATION) : 0;
       if (lblAlpha > 0) {
-        ctx!.fillStyle = `rgba(120,120,120,${lblAlpha})`;
+        ctx!.save();
+        ctx!.globalAlpha = lblAlpha;
+        ctx!.fillStyle = labelColor;
         ctx!.textAlign = "center";
         ctx!.font = `${isMobile ? 9 : 10}px ui-monospace, monospace`;
         let ni = 0;
@@ -197,6 +209,7 @@ export default function NeuralFormation({ onComplete }: { onComplete: () => void
           ctx!.fillText(layer.name, targets[ni].x, LABEL_SPACE - 8);
           ni += layer.count;
         });
+        ctx!.restore();
         if (lblAlpha >= 1) {
           triggerComplete();
           return; // stop scheduling new frames — animation is fully complete

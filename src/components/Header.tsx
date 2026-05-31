@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useRef, memo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { docs } from "@/data/docs";
-import { FiMenu, FiX, FiChevronDown } from "react-icons/fi";
+import { FiMenu, FiX, FiChevronDown, FiSun, FiMoon } from "react-icons/fi";
 import { cx } from "@/lib/cx";
 
 // Indice dell'ultima voce con figli — serve per allineare il dropdown a destra
@@ -18,6 +18,38 @@ const Header = () => {
   const [mobileSection, setMobileSection] = useState<string | null>(null);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  // In cima a QUALSIASI pagina l'header è trasparente; appena si scrolla → glass.
+  // Il listener si riaggancia a ogni cambio pagina (la navigazione resetta lo scroll a 0).
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 4);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [pathname]);
+
+  const transparentTop = !scrolled;
+
+  // Solo l'hero della home è sempre scuro: lì il testo va forzato chiaro (su desktop,
+  // dov'è davvero trasparente). Altrove i colori dell'header seguono il tema.
+  const isHome = (pathname.replace(/\/+$/, "") || "/") === "/";
+  const lightOverHero = isHome && transparentTop;
+
+  // Toggle tema chiaro/scuro: persistito in localStorage, applicato su <html data-theme>.
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  useEffect(() => {
+    const t = document.documentElement.getAttribute("data-theme");
+    if (t === "light" || t === "dark") setTheme(t);
+  }, []);
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => {
+      const next = prev === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("theme", next); } catch {}
+      return next;
+    });
+  }, []);
 
   const closeAll = useCallback(() => {
     setMobileOpen(false);
@@ -66,23 +98,46 @@ const Header = () => {
     }
   }, [toggleDropdown]);
 
+  // Voci nav: chiare sopra l'hero scuro; altrimenti seguono il tema (ink / surface-sunken).
+  const navItemCls = (active: boolean) =>
+    lightOverHero
+      ? active
+        ? "text-on-dark font-medium bg-white/10"
+        : "text-on-dark/70 hover:text-on-dark hover:bg-white/10"
+      : active
+        ? "text-ink font-medium bg-surface-sunken"
+        : "text-ink-soft hover:text-ink hover:bg-surface-sunken/60";
+
   return (
     <header
-      className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-neutral-200"
+      className={cx(
+        "sticky top-0 z-50 transition-colors duration-300",
+        transparentTop
+          ? "max-md:bg-surface-raised/55 max-md:backdrop-blur-xl max-md:border-b max-md:border-line/50"
+          : "bg-surface-raised/55 backdrop-blur-xl border-b border-line/50"
+      )}
       style={{ height: "var(--header-height)" }}
     >
-      <div className="flex items-center justify-between h-full px-4 sm:px-6">
+      <div className="relative flex items-center justify-between h-full px-4 sm:px-6">
 
         {/* Logo */}
         <Link
           href="/"
-          className="text-sm font-semibold tracking-tight text-black hover:text-neutral-500 transition-colors shrink-0"
+          className={cx(
+            "text-sm font-semibold tracking-tight transition-colors shrink-0",
+            lightOverHero
+              ? "text-ink hover:text-ink-soft md:text-on-dark md:hover:text-on-dark/70"
+              : "text-ink hover:text-ink-soft"
+          )}
         >
           AI-docs
         </Link>
 
-        {/* ── Nav desktop ──────────────────────────────────────────── */}
-        <nav className="hidden md:flex items-center gap-1" aria-label="Navigazione principale">
+        {/* ── Nav desktop — pill traslucida centrata ───────────────── */}
+        <nav
+          className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2 rounded-full px-1.5 py-1 nav-glass border border-white/10"
+          aria-label="Navigazione principale"
+        >
           {docs.map((page, pageIndex) => (
             <div
               key={page.href}
@@ -99,10 +154,8 @@ const Header = () => {
                     aria-haspopup="true"
                     aria-expanded={activeDropdown === page.href}
                     className={cx(
-                      "flex items-center gap-1 px-3 py-1.5 rounded-md text-sm transition-colors",
-                      isSectionActive(page.href)
-                        ? "text-black font-medium bg-neutral-100"
-                        : "text-neutral-500 hover:text-black hover:bg-neutral-50"
+                      "flex items-center gap-1 px-3 py-1.5 rounded-full text-sm transition-colors",
+                      navItemCls(isSectionActive(page.href))
                     )}
                   >
                     {page.title}
@@ -128,20 +181,20 @@ const Header = () => {
                       {/* Ponte invisibile che copre il gap di mt-1 */}
                       <div className="h-2 w-full" />
 
-                      <div className="bg-white border border-neutral-200 rounded-lg shadow-lg overflow-hidden py-1">
+                      <div className="bg-surface-raised border border-line rounded-lg shadow-lg overflow-hidden py-1">
                         <Link
                           href={page.href}
                           className={cx(
                             "block px-4 py-2 text-sm transition-colors",
                             isExact(page.href)
-                              ? "text-black font-medium bg-neutral-50"
-                              : "text-neutral-500 hover:text-black hover:bg-neutral-50"
+                              ? "text-ink font-medium bg-surface-sunken/60"
+                              : "text-ink-soft hover:text-ink hover:bg-surface-sunken/60"
                           )}
                         >
                           Panoramica
                         </Link>
 
-                        <div className="my-1 mx-3 border-t border-neutral-100" />
+                        <div className="my-1 mx-3 border-t border-line/60" />
 
                         {page.children.map(child => (
                           <Link
@@ -150,8 +203,8 @@ const Header = () => {
                             className={cx(
                               "block px-4 py-2 text-sm transition-colors",
                               isExact(child.href)
-                                ? "text-black font-medium bg-neutral-50"
-                                : "text-neutral-500 hover:text-black hover:bg-neutral-50"
+                                ? "text-ink font-medium bg-surface-sunken/60"
+                                : "text-ink-soft hover:text-ink hover:bg-surface-sunken/60"
                             )}
                           >
                             {child.title}
@@ -165,10 +218,8 @@ const Header = () => {
                 <Link
                   href={page.href}
                   className={cx(
-                    "block px-3 py-1.5 rounded-md text-sm transition-colors",
-                    isExact(page.href)
-                      ? "text-black font-medium bg-neutral-100"
-                      : "text-neutral-500 hover:text-black hover:bg-neutral-50"
+                    "block px-3 py-1.5 rounded-full text-sm transition-colors",
+                    navItemCls(isExact(page.href))
                   )}
                 >
                   {page.title}
@@ -178,21 +229,52 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* ── Hamburger mobile ─────────────────────────────────────── */}
-        <button
-          className="md:hidden p-2 -mr-1 rounded-md text-neutral-500 hover:text-black hover:bg-neutral-100 transition-colors"
-          aria-label={mobileOpen ? "Chiudi menu" : "Apri menu"}
-          aria-expanded={mobileOpen}
-          onClick={() => setMobileOpen(p => !p)}
-        >
-          {mobileOpen ? <FiX size={20} /> : <FiMenu size={20} />}
-        </button>
+        {/* ── Cluster destro: toggle tema + CTA + hamburger ──────────── */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Toggle chiaro/scuro — visibile su tutti i dispositivi */}
+          <button
+            onClick={toggleTheme}
+            aria-label={theme === "dark" ? "Attiva tema chiaro" : "Attiva tema scuro"}
+            title={theme === "dark" ? "Tema chiaro" : "Tema scuro"}
+            className={cx(
+              "p-2 rounded-full transition-colors",
+              lightOverHero
+                ? "text-ink hover:bg-surface-sunken/60 md:text-on-dark md:hover:bg-white/10"
+                : "text-ink-soft hover:text-ink hover:bg-surface-sunken/60"
+            )}
+          >
+            {theme === "dark" ? <FiSun size={18} /> : <FiMoon size={18} />}
+          </button>
+
+          {/* CTA "Inizia" — pill, solo desktop. Chiara sopra l'hero; altrimenti segue il tema */}
+          <Link
+            href="/fondamenti"
+            className={cx(
+              "hidden md:inline-flex items-center rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+              lightOverHero
+                ? "bg-on-dark text-night hover:bg-on-dark/85"
+                : "bg-ink text-surface hover:bg-ink/85"
+            )}
+          >
+            Inizia
+          </Link>
+
+          {/* Hamburger mobile (l'header su mobile è sempre glass → colori dal tema) */}
+          <button
+            className="md:hidden p-2 -mr-1 rounded-md text-ink-soft hover:text-ink hover:bg-surface-sunken transition-colors"
+            aria-label={mobileOpen ? "Chiudi menu" : "Apri menu"}
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen(p => !p)}
+          >
+            {mobileOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+          </button>
+        </div>
       </div>
 
       {/* ── Drawer mobile ────────────────────────────────────────────── */}
       {mobileOpen && (
         <div
-          className="md:hidden absolute inset-x-0 top-full bg-white border-t border-neutral-200 shadow-lg z-40 max-h-[calc(100dvh-var(--header-height,64px))] overflow-y-auto"
+          className="md:hidden absolute inset-x-0 top-full bg-surface-raised border-t border-line shadow-lg z-40 max-h-[calc(100dvh-var(--header-height,64px))] overflow-y-auto"
           aria-label="Menu mobile"
         >
           <ul className="px-3 py-2 space-y-0.5">
@@ -206,8 +288,8 @@ const Header = () => {
                       className={cx(
                         "w-full flex items-center justify-between px-3 py-2.5 rounded-md text-sm transition-colors",
                         isSectionActive(page.href)
-                          ? "text-black font-medium"
-                          : "text-neutral-600 hover:text-black hover:bg-neutral-50"
+                          ? "text-ink font-medium"
+                          : "text-ink-soft hover:text-ink hover:bg-surface-sunken/60"
                       )}
                     >
                       <span>{page.title}</span>
@@ -221,7 +303,7 @@ const Header = () => {
                     </button>
 
                     {mobileSection === page.href && (
-                      <ul className="ml-3 pl-3 border-l border-neutral-100 space-y-0.5 mb-1">
+                      <ul className="ml-3 pl-3 border-l border-line/60 space-y-0.5 mb-1">
                         <li>
                           <Link
                             href={page.href}
@@ -229,8 +311,8 @@ const Header = () => {
                             className={cx(
                               "block px-3 py-2 rounded-md text-sm transition-colors",
                               isExact(page.href)
-                                ? "text-black font-medium bg-neutral-100"
-                                : "text-neutral-500 hover:text-black hover:bg-neutral-50"
+                                ? "text-ink font-medium bg-surface-sunken"
+                                : "text-ink-soft hover:text-ink hover:bg-surface-sunken/60"
                             )}
                           >
                             Panoramica
@@ -244,8 +326,8 @@ const Header = () => {
                               className={cx(
                                 "block px-3 py-2 rounded-md text-sm transition-colors",
                                 isExact(child.href)
-                                  ? "text-black font-medium bg-neutral-100"
-                                  : "text-neutral-500 hover:text-black hover:bg-neutral-50"
+                                  ? "text-ink font-medium bg-surface-sunken"
+                                  : "text-ink-soft hover:text-ink hover:bg-surface-sunken/60"
                               )}
                             >
                               {child.title}
@@ -262,8 +344,8 @@ const Header = () => {
                     className={cx(
                       "block px-3 py-2.5 rounded-md text-sm transition-colors",
                       isExact(page.href)
-                        ? "text-black font-medium bg-neutral-100"
-                        : "text-neutral-600 hover:text-black hover:bg-neutral-50"
+                        ? "text-ink font-medium bg-surface-sunken"
+                        : "text-ink-soft hover:text-ink hover:bg-surface-sunken/60"
                     )}
                   >
                     {page.title}

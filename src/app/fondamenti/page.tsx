@@ -7,7 +7,7 @@ import DefinitionBlock from "@/components/DefinitionBlock";
 import CompareTable from "@/components/CompareTable";
 
 export const metadata: Metadata = {
-  title: "Fondamenti dell'IA",
+  title: "I Fondamenti dell'Intelligenza Artificiale",
   description:
     "Cos'è l'intelligenza artificiale, la differenza tra AI, ML e Deep Learning, la storia e i tipi di AI.",
 };
@@ -15,7 +15,8 @@ export const metadata: Metadata = {
 export default function FondamentiPage() {
   return (
     <DefaultPage
-      title="Fondamenti dell'IA"
+      title="I Fondamenti dell'Intelligenza Artificiale"
+      image="/img/pages/fondamenti.jpg"
       content={
         <div className="space-y-20">
 
@@ -48,6 +49,46 @@ export default function FondamentiPage() {
               rientra nella seconda categoria.
             </p>
           </ArticleSection>
+
+          {/* ── INDICE APPROFONDIMENTI — collega le 4 sotto-pagine ── */}
+          <section>
+            <p className="text-xs tracking-widest uppercase text-ink-faint text-center mb-6 sm:mb-8">
+              Approfondimenti
+            </p>
+            <CardGrid
+              columns={2}
+              cards={[
+                {
+                  title: "Machine Learning",
+                  tag: "Apprendimento",
+                  description:
+                    "Come un sistema impara dai dati invece di seguire regole scritte a mano: tipi di apprendimento, training e generalizzazione.",
+                  href: "/fondamenti/machine-learning",
+                },
+                {
+                  title: "Reti Neurali",
+                  tag: "Architettura",
+                  description:
+                    "Neuroni artificiali, pesi e strati: l'architettura ispirata al cervello che alimenta il deep learning moderno.",
+                  href: "/fondamenti/reti-neurali",
+                },
+                {
+                  title: "Progetto MNIST",
+                  tag: "Pratica",
+                  description:
+                    "Un classificatore di cifre scritte a mano, passo dopo passo: dalla teoria al codice funzionante.",
+                  href: "/fondamenti/progetto-mnist",
+                },
+                {
+                  title: "Tipi di AI",
+                  tag: "Capacità",
+                  description:
+                    "Narrow, General e Superintelligenza: quanto sono ampie — e quanto lontane — le capacità di un sistema.",
+                  href: "/fondamenti/tipi-ai",
+                },
+              ]}
+            />
+          </section>
 
           {/* ── 2. AI vs ML vs DL ── */}
           <ArticleSection

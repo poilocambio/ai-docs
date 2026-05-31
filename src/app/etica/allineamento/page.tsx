@@ -3,15 +3,17 @@ import DefaultPage from "@/components/DefaultPage";
 import ArticleSection from "@/components/ArticleSection";
 
 export const metadata: Metadata = {
-  title: "Il Problema dell'Allineamento",
+  title: "Allineamento: insegnare i valori alle macchine",
   description:
     "Come si costruisce un'AI che voglia ciò che noi vogliamo? Il problema filosofico e tecnico dell'allineamento tra valori umani e sistemi artificiali.",
 };
 
 export default function AllineamentoPage() {
   return (
+    // Hero opzionale: salva /img/pages/allineamento.jpg (prompt Canva AI in chat)
     <DefaultPage
-      title="Il Problema dell'Allineamento"
+      title="Allineamento: insegnare i valori alle macchine"
+      image="/img/pages/allineamento.jpg"
       content={
         <div className="space-y-20">
 

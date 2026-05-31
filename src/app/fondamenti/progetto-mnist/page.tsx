@@ -7,15 +7,17 @@ import DefinitionBlock from "@/components/DefinitionBlock";
 import CompareTable from "@/components/CompareTable";
 
 export const metadata: Metadata = {
-  title: "Progetto MNIST",
+  title: "Progetto MNIST: riconoscere cifre scritte a mano",
   description:
     "Un riconoscitore di cifre scritte a mano costruito con scikit-learn e un'interfaccia grafica Tkinter — dal training del modello al disegno in tempo reale.",
 };
 
 export default function ProgettoMNIST() {
   return (
+    // Hero opzionale: salva /img/pages/progetto-mnist.jpg (prompt Canva AI in chat)
     <DefaultPage
-      title="Progetto MNIST"
+      title="Progetto MNIST: riconoscere cifre scritte a mano"
+      image="/img/pages/progetto-mnist.jpg"
       content={
         <div className="space-y-20">
 
@@ -388,7 +390,7 @@ if __name__ == "__main__":
                 href="https://github.com/poilocambio/giochino_mnist"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-black font-medium underline underline-offset-2 hover:text-neutral-500 transition-colors"
+                className="text-ink font-medium underline underline-offset-2 hover:text-ink-soft transition-colors"
               >
                 github.com/poilocambio/giochino_mnist
               </a>

@@ -6,15 +6,17 @@ import CompareTable from "@/components/CompareTable";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Tipi di AI",
+  title: "Tipi di AI: da Narrow a Superintelligenza",
   description:
     "Narrow AI, AGI e superintelligenza: le differenze tra i tipi di intelligenza artificiale e cosa esiste davvero oggi.",
 };
 
 export default function TipiAI() {
   return (
+    // Hero opzionale: salva /img/pages/tipi-ai.jpg (prompt Canva AI in chat)
     <DefaultPage
-      title="Tipi di AI"
+      title="Tipi di AI: da Narrow a Superintelligenza"
+      image="/img/pages/tipi-ai.jpg"
       content={
         <div className="space-y-20">
 

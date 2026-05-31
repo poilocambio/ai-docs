@@ -46,7 +46,7 @@ export default function RetiNeurali() {
 
         {/* Label top-left */}
         <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-10 pointer-events-none select-none">
-          <p className="text-xs tracking-widest uppercase text-neutral-400">
+          <p className="text-xs tracking-widest uppercase text-ink-faint">
             Reti Neurali
           </p>
         </div>
@@ -63,7 +63,7 @@ export default function RetiNeurali() {
         >
           <button
             onClick={handleContinue}
-            className="group flex flex-col items-center gap-2 px-4 py-2 text-neutral-500 hover:text-black active:text-black transition-colors"
+            className="group flex flex-col items-center gap-2 px-4 py-2 text-ink-soft hover:text-ink active:text-ink transition-colors"
             aria-label="Vai al contenuto"
           >
             <span className="text-xs tracking-widest uppercase font-medium">

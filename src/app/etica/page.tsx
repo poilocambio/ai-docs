@@ -4,15 +4,17 @@ import ArticleSection from "@/components/ArticleSection";
 import CardGrid from "@/components/CardGrid";
 
 export const metadata: Metadata = {
-  title: "Etica dell'IA",
+  title: "L'Etica dell'Intelligenza Artificiale",
   description:
     "Bias algoritmico, responsabilità, impatto cognitivo e governance: i dilemmi etici dell'intelligenza artificiale.",
 };
 
 export default function EticaPage() {
   return (
+    // Hero opzionale: salva /img/pages/etica.jpg (prompt Canva AI in chat)
     <DefaultPage
-      title="Etica dell'IA"
+      title="L'Etica dell'Intelligenza Artificiale"
+      image="/img/pages/etica.jpg"
       content={
         <div className="space-y-20">
 
@@ -47,7 +49,7 @@ export default function EticaPage() {
 
           {/* ── LE DUE AREE ───────────────────────────────────────────── */}
           <section>
-            <p className="text-xs tracking-widest uppercase text-neutral-400 text-center mb-6 sm:mb-8">
+            <p className="text-xs tracking-widest uppercase text-ink-faint text-center mb-6 sm:mb-8">
               Approfondimenti
             </p>
             <CardGrid
